@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsFinanceiro
+      ActivePage = tsCadastrarPessoa
       Align = alClient
       TabOrder = 0
       ExplicitTop = 54
@@ -52,7 +52,6 @@ object FmMain: TFmMain
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          OnClick = pnlCadPessoaClick
           object lblUF: TLabel
             Left = 183
             Top = 156
@@ -459,7 +458,6 @@ object FmMain: TFmMain
       object tsFinanceiro: TTabSheet
         Caption = 'tsFinanceiro'
         ImageIndex = 1
-        ExplicitLeft = 0
         object pnlFinanceiro: TPanel
           Left = 0
           Top = 0
@@ -468,10 +466,9 @@ object FmMain: TFmMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 16
-          object lblUF1: TLabel
-            Left = 23
-            Top = 28
+          object lblEmissao: TLabel
+            Left = 34
+            Top = 68
             Width = 55
             Height = 16
             Caption = 'Emiss'#227'o:'
@@ -482,9 +479,9 @@ object FmMain: TFmMain
             Font.Style = []
             ParentFont = False
           end
-          object lblUF2: TLabel
-            Left = 167
-            Top = 28
+          object lblVencimento: TLabel
+            Left = 258
+            Top = 68
             Width = 72
             Height = 16
             Caption = 'Vencimento:'
@@ -495,9 +492,9 @@ object FmMain: TFmMain
             Font.Style = []
             ParentFont = False
           end
-          object lblUF3: TLabel
-            Left = 311
-            Top = 30
+          object lblPessoa: TLabel
+            Left = 466
+            Top = 68
             Width = 48
             Height = 16
             Caption = 'Pessoa:'
@@ -508,10 +505,10 @@ object FmMain: TFmMain
             Font.Style = []
             ParentFont = False
           end
-          object dtp1: TDateTimePicker
-            Left = 23
-            Top = 48
-            Width = 122
+          object dtEmissao: TDateTimePicker
+            Left = 34
+            Top = 90
+            Width = 185
             Height = 25
             Date = 45517.000000000000000000
             Time = 0.692854398148483600
@@ -523,10 +520,10 @@ object FmMain: TFmMain
             ParentFont = False
             TabOrder = 0
           end
-          object dtp2: TDateTimePicker
-            Left = 167
-            Top = 48
-            Width = 122
+          object dtVencimento: TDateTimePicker
+            Left = 258
+            Top = 88
+            Width = 185
             Height = 25
             Date = 45517.000000000000000000
             Time = 0.692854398148483600
@@ -538,10 +535,10 @@ object FmMain: TFmMain
             ParentFont = False
             TabOrder = 1
           end
-          object cbbUF1: TComboBox
-            Left = 311
-            Top = 48
-            Width = 114
+          object cbbPessoa: TComboBox
+            Left = 466
+            Top = 88
+            Width = 185
             Height = 25
             Cursor = crHandPoint
             Style = csDropDownList
@@ -580,6 +577,93 @@ object FmMain: TFmMain
               #10'SP'
               #10'SE'
               #10'TO')
+          end
+          object lbledtValorNominal: TLabeledEdit
+            Left = 258
+            Top = 154
+            Width = 185
+            Height = 25
+            EditLabel.Width = 86
+            EditLabel.Height = 17
+            EditLabel.Caption = 'Valor Nominal:'
+            EditLabel.Font.Charset = DEFAULT_CHARSET
+            EditLabel.Font.Color = clWindowText
+            EditLabel.Font.Height = -13
+            EditLabel.Font.Name = 'Segoe UI'
+            EditLabel.Font.Style = []
+            EditLabel.ParentFont = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            MaxLength = 50
+            ParentFont = False
+            TabOrder = 3
+          end
+          object lbledtValorAberto: TLabeledEdit
+            Left = 34
+            Top = 154
+            Width = 185
+            Height = 25
+            EditLabel.Width = 77
+            EditLabel.Height = 17
+            EditLabel.Caption = 'Valor Aberto:'
+            EditLabel.Font.Charset = DEFAULT_CHARSET
+            EditLabel.Font.Color = clWindowText
+            EditLabel.Font.Height = -13
+            EditLabel.Font.Name = 'Segoe UI'
+            EditLabel.Font.Style = []
+            EditLabel.ParentFont = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            MaxLength = 50
+            ParentFont = False
+            TabOrder = 4
+          end
+          object lbledtValorPago: TLabeledEdit
+            Left = 466
+            Top = 154
+            Width = 185
+            Height = 25
+            EditLabel.Width = 67
+            EditLabel.Height = 17
+            EditLabel.Caption = 'Valor Pago:'
+            EditLabel.Font.Charset = DEFAULT_CHARSET
+            EditLabel.Font.Color = clWindowText
+            EditLabel.Font.Height = -13
+            EditLabel.Font.Name = 'Segoe UI'
+            EditLabel.Font.Style = []
+            EditLabel.ParentFont = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            MaxLength = 50
+            ParentFont = False
+            TabOrder = 5
+          end
+          object btnSalvarFinanceiro: TButton
+            Left = 568
+            Top = 238
+            Width = 91
+            Height = 27
+            Cursor = crHandPoint
+            Caption = 'Salvar'
+            TabOrder = 6
+          end
+          object btnCancelarFinanceiro: TButton
+            Left = 471
+            Top = 238
+            Width = 91
+            Height = 27
+            Cursor = crHandPoint
+            Caption = 'Cancelar'
+            TabOrder = 7
           end
         end
       end

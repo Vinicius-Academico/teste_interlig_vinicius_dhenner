@@ -38,21 +38,25 @@ type
     btnSalvarPessoa: TButton;
     btnCancelarPessoa: TButton;
     pnlFinanceiro: TPanel;
-    dtp1: TDateTimePicker;
-    dtp2: TDateTimePicker;
-    lblUF1: TLabel;
-    lblUF2: TLabel;
-    lblUF3: TLabel;
-    cbbUF1: TComboBox;
+    dtEmissao: TDateTimePicker;
+    dtVencimento: TDateTimePicker;
+    lblEmissao: TLabel;
+    lblVencimento: TLabel;
+    lblPessoa: TLabel;
+    cbbPessoa: TComboBox;
+    lbledtValorNominal: TLabeledEdit;
+    lbledtValorAberto: TLabeledEdit;
+    lbledtValorPago: TLabeledEdit;
+    btnSalvarFinanceiro: TButton;
+    btnCancelarFinanceiro: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
     procedure btnCadastrarPessoasClick(Sender: TObject);
     procedure btnCadastrarFinanceiroClick(Sender: TObject);
-    procedure btnCancelarPessoaClick(Sender: TObject);
     procedure rgTipoPessoaClick(Sender: TObject);
     procedure btnSalvarPessoaClick(Sender: TObject);
-    procedure pnlCadPessoaClick(Sender: TObject);
+    procedure btnCancelarPessoaClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -63,6 +67,9 @@ type
     procedure SalvarCliente;
     function FornecedorValido: Boolean;
     procedure SalvarFornecedor;
+    procedure SalvarFinanceiro;
+    function FinanceiroValido: Boolean;
+    procedure TratamentoDoCampoLabelEdit(Condicao: Boolean; edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
   public
   end;
 
@@ -111,6 +118,9 @@ procedure TFmMain.CancelarCadastroDePessoa;
 //Sai da tela de cadastro
 //e limpa os edits
 //======================
+
+
+
 begin
   pgc.ActivePageIndex := 0;
   LimparRegistrosCadPessoa;
@@ -172,6 +182,11 @@ begin
   SalvarPessoa;
 end;
 
+function TFmMain.FinanceiroValido: Boolean;
+begin
+  Result := true;
+end;
+
 procedure TFmMain.FormCreate(Sender: TObject);
 begin
   ConectarNoBancoDeDados;
@@ -197,9 +212,31 @@ begin
   ShowMessage('Vai salvar cliente');
 end;
 
+procedure TFmMain.SalvarFinanceiro;
+begin
+  if (dtEmissao.Date = 0) then
+  begin
+    ShowMessage('Preencha o campo data de emissão.');
+    dtEmissao.SetFocus;
+    exit;
+  end;
+  if (dtVencimento.Date = 0) then
+  begin
+    ShowMessage('Preencha o campo data de emissão.');
+    dtVencimento.SetFocus;
+    exit;
+  end;
+  if not (cbbPessoa.ItemIndex >= 0) then
+  begin
+    ShowMessage('Preencha o campo pessoa.');
+    cbbPessoa.SetFocus;
+    exit;
+  end;
+end;
+
 procedure TFmMain.SalvarFornecedor;
 begin
-    ShowMessage('Vai salvar fornecedor');
+  ShowMessage('Vai salvar fornecedor');
 end;
 
 procedure TFmMain.SalvarPessoa;
@@ -214,7 +251,7 @@ begin
     Exit;
   end;
 
-    if Length(lbledtCelular.text) < 8 then
+  if Length(lbledtCelular.text) < 8 then
   begin
     ShowMessage('Preencha o campo celular!');
     lbledtCelular.SetFocus;
@@ -236,16 +273,38 @@ begin
   //==========================
 end;
 
+procedure TFmMain.TratamentoDoCampoLabelEdit(Condicao: Boolean; edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
+//=========================================
+//Esta funcao compara os campos de TLabelEdit,
+//evitando excesso de if/else
+//=========================================
+
+//=========================================
+//So vai entrar na condicao caso a variavel
+//de controle esteja zero, isso serve para
+//pausar as mensagens de erro no primeiro
+//erro. Caso o erro ocorra, sera incrementado
+//na variavel de controle para que os outros
+//campos seguintes nao entram na condicao
+//impedindo múltiplas mensagens de erro.
+//=========================================
+begin
+  if Controle = 0 then
+  begin
+    if Condicao then
+    begin
+      ShowMessage(Mensagem);
+      edt.setfocus;
+      Inc(Controle);
+    end;
+  end;
+end;
+
 function TFmMain.ClienteValido: Boolean;
 begin
-  result := false;
-  if not (Length(lbledtCpf.Text) = 11) then
-  begin
-    ShowMessage('Preencha o campo CPF!');
-    lbledtCPF.SetFocus;
-    exit;
-  end;
-  Result := true;
+  var Controle := 0;
+  TratamentoDoCampoLabelEdit(not (Length(lbledtCpf.Text) = 11), lbledtCpf, 'Preencha o campo CPF!', Controle);
+  Result := Controle = 0;
 end;
 
 end.
