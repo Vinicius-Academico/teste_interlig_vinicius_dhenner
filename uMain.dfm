@@ -261,6 +261,7 @@ object FmMain: TFmMain
               'Fornecedor')
             ParentFont = False
             TabOrder = 7
+            OnClick = rgTipoPessoaClick
           end
           object lbledtLimiteCredito: TLabeledEdit
             Left = 255
@@ -366,6 +367,7 @@ object FmMain: TFmMain
             EditLabel.Font.Name = 'Segoe UI'
             EditLabel.Font.Style = []
             EditLabel.ParentFont = False
+            Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -389,6 +391,7 @@ object FmMain: TFmMain
             EditLabel.Font.Name = 'Segoe UI'
             EditLabel.Font.Style = []
             EditLabel.ParentFont = False
+            Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -411,6 +414,7 @@ object FmMain: TFmMain
             EditLabel.Font.Name = 'Segoe UI'
             EditLabel.Font.Style = []
             EditLabel.ParentFont = False
+            Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -427,7 +431,6 @@ object FmMain: TFmMain
             Cursor = crHandPoint
             Caption = 'Salvar'
             TabOrder = 15
-            OnClick = btnListarPessoasClick
           end
           object btnCancelarPessoa: TButton
             Left = 467
@@ -437,7 +440,7 @@ object FmMain: TFmMain
             Cursor = crHandPoint
             Caption = 'Cancelar'
             TabOrder = 16
-            OnClick = btnListarPessoasClick
+            OnClick = btnCancelarPessoaClick
           end
         end
       end

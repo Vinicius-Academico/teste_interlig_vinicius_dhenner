@@ -6,10 +6,9 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf,
-  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Phys.FB,
-  FireDAC.Phys.FBDef, FireDAC.Phys.IBBase, System.IniFiles, Vcl.Dialogs,
-  VCl.Clipbrd;
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, Data.DB,
+  FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
+  FireDAC.Phys.IBBase, System.IniFiles, Vcl.Dialogs, VCl.Clipbrd;
 
 type
   TDmDados = class(TDataModule)
@@ -17,9 +16,9 @@ type
     FDConnection: TFDConnection;
     FDPhysFBDriverLink: TFDPhysFBDriverLink;
   private
-
   public
     procedure ConnectDatabase;
+    procedure ExecuteCommandSQL(ASQL, AError: string);
   end;
 
 var
@@ -31,11 +30,30 @@ implementation
 
 {$R *.dfm}
 
+procedure TDmDados.ExecuteCommandSQL(ASQL, AError: string);
+var
+  Query: TFDQuery;
+begin
+  try
+    Query := TFDQuery.Create(Self);
+    Query.Connection := FDConnection;
+    try
+      Query.SQL.Text := ASQL;
+      Query.ExecSQL;
+      FDConnection.CommitRetaining;
+    except
+      on e: Exception do
+        ShowMessage(AError + ' ' + e.Message);
+    end;
+  finally
+    FreeAndNil(Query);
+  end;
+end;
 
 procedure TDmDados.ConnectDatabase;
 var
   Ini: TIniFile;
-  PathIni : string;
+  PathIni: string;
 begin
   PathIni := ExtractFilePath(ParamStr(0)) + 'parametro.ini';
   try
@@ -55,6 +73,5 @@ begin
   end;
 end;
 
-
-
 end.
+

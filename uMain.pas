@@ -42,7 +42,13 @@ type
     procedure btnListarPessoasClick(Sender: TObject);
     procedure btnCadastrarPessoasClick(Sender: TObject);
     procedure btnCadastrarFinanceiroClick(Sender: TObject);
+    procedure btnCancelarPessoaClick(Sender: TObject);
+    procedure rgTipoPessoaClick(Sender: TObject);
   private
+    procedure CancelarCadastroDePessoa;
+    procedure ConectarNoBancoDeDados;
+    procedure DeixarTabsInvisiveis;
+    procedure DefineTipoPessoa;
   public
   end;
 
@@ -63,6 +69,76 @@ begin
   pgc.ActivePageIndex := 1;
 end;
 
+procedure TFmMain.btnCancelarPessoaClick(Sender: TObject);
+begin
+  CancelarCadastroDePessoa;
+end;
+
+procedure TFmMain.CancelarCadastroDePessoa;
+
+  procedure LimparRegistrosCadPessoa;
+  begin
+    cbbUF.ItemIndex := -1;
+    lbledtNome.Clear;
+    lbledtCelular.Clear;
+    lbledtEmail.Clear;
+    lbledtEndereco.Clear;
+    lbledtNumero.Clear;
+    lbledtCidade.Clear;
+    lbledtLimiteCredito.Clear;
+    lbledtRendaMensal.Clear;
+    lbledtCNH.Clear;
+    lbledtCPF.Clear;
+    lbledtCNPJ.Clear;
+    lbledtIE.Clear;
+    lbledtRazaoSocial.Clear;
+  end;
+
+begin
+  pgc.ActivePageIndex := 0;
+  LimparRegistrosCadPessoa;
+end;
+
+procedure TFmMain.ConectarNoBancoDeDados;
+begin
+  if not Assigned(DmDados) then
+    DmDados := TDmDados.Create(Application);
+  DmDados.ConnectDatabase;
+end;
+
+procedure TFmMain.DeixarTabsInvisiveis;
+begin
+  tsPessoas.TabVisible := false;
+  tsCadastrarPessoa.TabVisible := false;
+  tsFinanceiro.TabVisible := false;
+end;
+
+procedure TFmMain.DefineTipoPessoa;
+begin
+  case rgTipoPessoa.ItemIndex of
+    0:
+      begin
+        lbledtLimiteCredito.Enabled := True;
+        lbledtRendaMensal.Enabled := True;
+        lbledtCNH.Enabled := True;
+        lbledtCPF.Enabled := True;
+        lbledtCNPJ.Enabled := False;
+        lbledtIE.Enabled := false;
+        lbledtRazaoSocial.Enabled := false;
+      end;
+    1:
+      begin
+        lbledtLimiteCredito.Enabled := False;
+        lbledtRendaMensal.Enabled := False;
+        lbledtCNH.Enabled := False;
+        lbledtCPF.Enabled := False;
+        lbledtCNPJ.Enabled := True;
+        lbledtIE.Enabled := True;
+        lbledtRazaoSocial.Enabled := True;
+      end;
+  end;
+end;
+
 procedure TFmMain.btnListarPessoasClick(Sender: TObject);
 begin
   pgc.ActivePageIndex := 0;
@@ -70,16 +146,17 @@ end;
 
 procedure TFmMain.FormCreate(Sender: TObject);
 begin
-  if not Assigned(DmDados) then
-    DmDados := TDmDados.Create(Application);
-  DmDados.ConnectDatabase;
+  ConectarNoBancoDeDados;
 end;
 
 procedure TFmMain.FormShow(Sender: TObject);
 begin
-  tsPessoas.TabVisible := false;
-  tsCadastrarPessoa.TabVisible := false;
-  tsFinanceiro.TabVisible := false;
+  DeixarTabsInvisiveis;
+end;
+
+procedure TFmMain.rgTipoPessoaClick(Sender: TObject);
+begin
+  DefineTipoPessoa;
 end;
 
 end.
