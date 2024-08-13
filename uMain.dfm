@@ -36,14 +36,10 @@ object FmMain: TFmMain
       TabOrder = 0
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
-        ExplicitLeft = 8
-        ExplicitTop = 28
-        ExplicitHeight = 391
       end
       object tsCadastrarPessoa: TTabSheet
         Caption = 'tsCadastrarPessoa'
         ImageIndex = 2
-        ExplicitHeight = 391
         object pnlCadPessoa: TPanel
           Left = 0
           Top = 0
@@ -55,7 +51,6 @@ object FmMain: TFmMain
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 3
           object lblUF: TLabel
             Left = 183
             Top = 156
@@ -431,6 +426,7 @@ object FmMain: TFmMain
             Cursor = crHandPoint
             Caption = 'Salvar'
             TabOrder = 15
+            OnClick = btnSalvarPessoaClick
           end
           object btnCancelarPessoa: TButton
             Left = 467
@@ -447,7 +443,6 @@ object FmMain: TFmMain
       object tsFinanceiro: TTabSheet
         Caption = 'tsFinanceiro'
         ImageIndex = 1
-        ExplicitHeight = 391
       end
     end
     object pnlButtons: TPanel
@@ -458,7 +453,6 @@ object FmMain: TFmMain
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = -6
       object btnListarPessoas: TButton
         Left = 2
         Top = 11

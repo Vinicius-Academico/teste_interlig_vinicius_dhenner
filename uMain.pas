@@ -44,11 +44,17 @@ type
     procedure btnCadastrarFinanceiroClick(Sender: TObject);
     procedure btnCancelarPessoaClick(Sender: TObject);
     procedure rgTipoPessoaClick(Sender: TObject);
+    procedure btnSalvarPessoaClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
     procedure DeixarTabsInvisiveis;
     procedure DefineTipoPessoa;
+    procedure SalvarPessoa;
+    function ClienteValido: Boolean;
+    procedure SalvarCliente;
+    function FornecedorValido: Boolean;
+    procedure SalvarFornecedor;
   public
   end;
 
@@ -144,6 +150,11 @@ begin
   pgc.ActivePageIndex := 0;
 end;
 
+procedure TFmMain.btnSalvarPessoaClick(Sender: TObject);
+begin
+  SalvarPessoa;
+end;
+
 procedure TFmMain.FormCreate(Sender: TObject);
 begin
   ConectarNoBancoDeDados;
@@ -154,9 +165,68 @@ begin
   DeixarTabsInvisiveis;
 end;
 
+function TFmMain.FornecedorValido: Boolean;
+begin
+  result := true;
+end;
+
 procedure TFmMain.rgTipoPessoaClick(Sender: TObject);
 begin
   DefineTipoPessoa;
+end;
+
+procedure TFmMain.SalvarCliente;
+begin
+  ShowMessage('Vai salvar cliente');
+end;
+
+procedure TFmMain.SalvarFornecedor;
+begin
+    ShowMessage('Vai salvar fornecedor');
+end;
+
+procedure TFmMain.SalvarPessoa;
+begin
+  //==========================
+  //Trata is campos que sao utilizados por
+  //cliente e fornecedor 
+  //==========================
+  if Length(lbledtNome.text) < 3 then
+  begin
+    ShowMessage('Preencha o campo nome!');
+    lbledtNome.SetFocus;
+    Exit;
+  end;
+
+    if Length(lbledtCelular.text) < 8 then
+  begin
+    ShowMessage('Preencha o campo celular!');
+    lbledtCelular.SetFocus;
+    Exit;
+  end;
+
+  
+  case rgTipoPessoa.ItemIndex of
+    0:
+      if ClienteValido then
+        SalvarCliente;
+    1:
+      if FornecedorValido then
+        SalvarFornecedor;
+
+  end;
+end;
+
+function TFmMain.ClienteValido: Boolean;
+begin
+  result := false;
+  if not (Length(lbledtCpf.Text) = 11) then
+  begin
+    ShowMessage('Preencha o campo CPF!');
+    lbledtCPF.SetFocus;
+    exit;
+  end;
+  Result := true;
 end;
 
 end.
