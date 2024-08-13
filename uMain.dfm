@@ -83,6 +83,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 50
             ParentFont = False
             TabOrder = 0
           end
@@ -105,6 +106,8 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 13
+            NumbersOnly = True
             ParentFont = False
             TabOrder = 1
           end
@@ -127,6 +130,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 500
             ParentFont = False
             TabOrder = 2
           end
@@ -149,6 +153,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 80
             ParentFont = False
             TabOrder = 3
           end
@@ -171,6 +176,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 10
             ParentFont = False
             TabOrder = 4
           end
@@ -193,6 +199,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 100
             ParentFont = False
             TabOrder = 5
           end
@@ -277,6 +284,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 15
             ParentFont = False
             TabOrder = 8
           end
@@ -299,6 +307,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 15
             ParentFont = False
             TabOrder = 9
           end
@@ -321,6 +330,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 20
             NumbersOnly = True
             ParentFont = False
             TabOrder = 10
@@ -344,6 +354,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 11
             NumbersOnly = True
             ParentFont = False
             TabOrder = 11
@@ -368,6 +379,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 14
             NumbersOnly = True
             ParentFont = False
             TabOrder = 12
@@ -392,6 +404,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 20
             ParentFont = False
             TabOrder = 13
           end
@@ -415,6 +428,7 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 80
             ParentFont = False
             TabOrder = 14
           end
