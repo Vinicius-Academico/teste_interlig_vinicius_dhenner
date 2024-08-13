@@ -25,6 +25,18 @@ type
     lbledtEndereco: TLabeledEdit;
     lbledtNumero: TLabeledEdit;
     lbledtCidade: TLabeledEdit;
+    cbbUF: TComboBox;
+    lblUF: TLabel;
+    rgTipoPessoa: TRadioGroup;
+    lbledtLimiteCredito: TLabeledEdit;
+    lbledtRendaMensal: TLabeledEdit;
+    lbledtCNH: TLabeledEdit;
+    lbledtCPF: TLabeledEdit;
+    lbledtCNPJ: TLabeledEdit;
+    lbledtIE: TLabeledEdit;
+    lbledtRazaoSocial: TLabeledEdit;
+    btnSalvarPessoa: TButton;
+    btnCancelarPessoa: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
