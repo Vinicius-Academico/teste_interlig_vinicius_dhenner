@@ -19,9 +19,6 @@ object DmDados: TDmDados
   end
   object FDPhysFBDriverLink: TFDPhysFBDriverLink
     DriverID = 'FB'
-    VendorLib = 
-      'C:\Users\Administrador\Documents\GitHub\teste_interlig_vinicius_' +
-      'dhenner\fbclient.dll'
     Left = 464
     Top = 144
   end

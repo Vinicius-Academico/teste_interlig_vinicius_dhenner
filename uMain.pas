@@ -37,6 +37,13 @@ type
     lbledtRazaoSocial: TLabeledEdit;
     btnSalvarPessoa: TButton;
     btnCancelarPessoa: TButton;
+    pnlFinanceiro: TPanel;
+    dtp1: TDateTimePicker;
+    dtp2: TDateTimePicker;
+    lblUF1: TLabel;
+    lblUF2: TLabel;
+    lblUF3: TLabel;
+    cbbUF1: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
@@ -45,6 +52,7 @@ type
     procedure btnCancelarPessoaClick(Sender: TObject);
     procedure rgTipoPessoaClick(Sender: TObject);
     procedure btnSalvarPessoaClick(Sender: TObject);
+    procedure pnlCadPessoaClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -99,7 +107,10 @@ procedure TFmMain.CancelarCadastroDePessoa;
     lbledtIE.Clear;
     lbledtRazaoSocial.Clear;
   end;
-
+//======================
+//Sai da tela de cadastro
+//e limpa os edits
+//======================
 begin
   pgc.ActivePageIndex := 0;
   LimparRegistrosCadPessoa;
@@ -120,6 +131,12 @@ begin
 end;
 
 procedure TFmMain.DefineTipoPessoa;
+//==================
+//Ativa ou desativa
+//ou edists conforme
+//esteja selecionado n
+//no radio group
+//==================
 begin
   case rgTipoPessoa.ItemIndex of
     0:
@@ -189,8 +206,7 @@ procedure TFmMain.SalvarPessoa;
 begin
   //==========================
   //Trata is campos que sao utilizados por
-  //cliente e fornecedor 
-  //==========================
+  //cliente e fornecedor
   if Length(lbledtNome.text) < 3 then
   begin
     ShowMessage('Preencha o campo nome!');
@@ -204,8 +220,10 @@ begin
     lbledtCelular.SetFocus;
     Exit;
   end;
+  //==========================
 
-  
+  //==========================
+  //Trata os campos de cada um
   case rgTipoPessoa.ItemIndex of
     0:
       if ClienteValido then
@@ -215,6 +233,7 @@ begin
         SalvarFornecedor;
 
   end;
+  //==========================
 end;
 
 function TFmMain.ClienteValido: Boolean;

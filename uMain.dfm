@@ -31,9 +31,10 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsCadastrarPessoa
+      ActivePage = tsFinanceiro
       Align = alClient
       TabOrder = 0
+      ExplicitTop = 54
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
       end
@@ -51,6 +52,7 @@ object FmMain: TFmMain
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          OnClick = pnlCadPessoaClick
           object lblUF: TLabel
             Left = 183
             Top = 156
@@ -457,6 +459,129 @@ object FmMain: TFmMain
       object tsFinanceiro: TTabSheet
         Caption = 'tsFinanceiro'
         ImageIndex = 1
+        ExplicitLeft = 0
+        object pnlFinanceiro: TPanel
+          Left = 0
+          Top = 0
+          Width = 693
+          Height = 332
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 0
+          ExplicitLeft = 16
+          object lblUF1: TLabel
+            Left = 23
+            Top = 28
+            Width = 55
+            Height = 16
+            Caption = 'Emiss'#227'o:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI '
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblUF2: TLabel
+            Left = 167
+            Top = 28
+            Width = 72
+            Height = 16
+            Caption = 'Vencimento:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI '
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblUF3: TLabel
+            Left = 311
+            Top = 30
+            Width = 48
+            Height = 16
+            Caption = 'Pessoa:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI '
+            Font.Style = []
+            ParentFont = False
+          end
+          object dtp1: TDateTimePicker
+            Left = 23
+            Top = 48
+            Width = 122
+            Height = 25
+            Date = 45517.000000000000000000
+            Time = 0.692854398148483600
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+          end
+          object dtp2: TDateTimePicker
+            Left = 167
+            Top = 48
+            Width = 122
+            Height = 25
+            Date = 45517.000000000000000000
+            Time = 0.692854398148483600
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+          end
+          object cbbUF1: TComboBox
+            Left = 311
+            Top = 48
+            Width = 114
+            Height = 25
+            Cursor = crHandPoint
+            Style = csDropDownList
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
+            Items.Strings = (
+              'AC'
+              #10'AL'#10
+              'AP'
+              #10'AM'
+              #10'BA'#10
+              'CE'#10
+              'DF'
+              #10'ES'
+              #10'GO'
+              #10'MA'
+              #10'MT'
+              #10'MS'
+              #10'MG'
+              #10'PA'
+              #10'PB'
+              #10'PR'
+              #10'PE'
+              #10'PI'
+              #10'RJ'
+              #10'RN'
+              #10'RS'
+              #10'RO'
+              #10'RR'
+              #10'SC'
+              #10'SP'
+              #10'SE'
+              #10'TO')
+          end
+        end
       end
     end
     object pnlButtons: TPanel

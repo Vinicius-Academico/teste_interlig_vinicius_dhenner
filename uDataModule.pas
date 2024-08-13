@@ -53,9 +53,13 @@ end;
 procedure TDmDados.ConnectDatabase;
 var
   Ini: TIniFile;
-  PathIni: string;
+  PathIni, PathLIb: string;
 begin
   PathIni := ExtractFilePath(ParamStr(0)) + 'parametro.ini';
+  PathLIb := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
+    ShowMessage(PathLIb);
+  FDPhysFBDriverLink.VendorLib := PathLIb;
+
   try
     Ini := TIniFile.Create(PathIni);
     try
