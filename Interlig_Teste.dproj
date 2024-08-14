@@ -101,15 +101,19 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="uMain.pas">
-            <Form>FmMain</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uPessoa.pas"/>
         <DCCReference Include="uDataModule.pas">
             <Form>DmDados</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="uCliente.pas"/>
+        <DCCReference Include="uFinanceiro.pas"/>
+        <DCCReference Include="uFinanceiroPagamentos.pas"/>
+        <DCCReference Include="uFornecedor.pas"/>
+        <DCCReference Include="uMain.pas">
+            <Form>FmMain</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -138,7 +142,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win32\Debug\Interlig_Teste.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Interlig_Teste.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Interlig_Teste.exe</RemoteName>
                         <Overwrite>true</Overwrite>

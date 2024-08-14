@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsCadastrarPessoa
+      ActivePage = tsFinanceiro
       Align = alClient
       TabOrder = 0
       ExplicitTop = 54
@@ -39,17 +39,68 @@ object FmMain: TFmMain
         Caption = 'tsPessoas'
         object gridPessoas: TDBGrid
           Left = 0
-          Top = 0
+          Top = 65
           Width = 693
-          Height = 332
+          Height = 267
           Align = alClient
           DataSource = dsPessoas
+          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+        end
+        object pnlClienteOuFornecedor: TPanel
+          Left = 0
+          Top = 0
+          Width = 693
+          Height = 65
+          Align = alTop
+          TabOrder = 1
+          ExplicitLeft = -3
+          ExplicitTop = -6
+          object rgTipoPessoaGrid: TRadioGroup
+            Left = 0
+            Top = 7
+            Width = 177
+            Height = 42
+            Caption = 'Tipo Pessoa: '
+            Columns = 2
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ItemIndex = 0
+            Items.Strings = (
+              'Cliente'
+              'Fornecedor')
+            ParentFont = False
+            TabOrder = 0
+            OnClick = rgTipoPessoaGridClick
+          end
+          object btnCadastrarFinanceiro: TButton
+            Left = 300
+            Top = 11
+            Width = 111
+            Height = 37
+            Cursor = crHandPoint
+            Caption = 'Cadastrar Financeiro'
+            TabOrder = 1
+            OnClick = btnCadastrarFinanceiroClick
+          end
+          object btnVisualizarFinanceiro: TButton
+            Left = 183
+            Top = 11
+            Width = 111
+            Height = 37
+            Cursor = crHandPoint
+            Caption = 'Visualizar Financeiro'
+            TabOrder = 2
+            OnClick = btnCadastrarFinanceiroClick
+          end
         end
       end
       object tsCadastrarPessoa: TTabSheet
@@ -481,8 +532,8 @@ object FmMain: TFmMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = -40
-          ExplicitTop = -56
+          ExplicitLeft = -32
+          ExplicitTop = -39
           object lblEmissao: TLabel
             Left = 34
             Top = 68
@@ -509,12 +560,38 @@ object FmMain: TFmMain
             Font.Style = []
             ParentFont = False
           end
-          object lblPessoa: TLabel
-            Left = 466
-            Top = 68
-            Width = 53
+          object lblCodPessoa: TLabel
+            Left = 86
+            Top = 28
+            Width = 14
             Height = 16
-            Caption = 'Pessoa:*'
+            Caption = '00'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI '
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblPessoa: TLabel
+            Left = 33
+            Top = 28
+            Width = 48
+            Height = 16
+            Caption = 'Pessoa:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI '
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblStatus: TLabel
+            Left = 34
+            Top = 224
+            Width = 42
+            Height = 16
+            Caption = 'Status:'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -552,52 +629,9 @@ object FmMain: TFmMain
             ParentFont = False
             TabOrder = 1
           end
-          object cbbPessoa: TComboBox
+          object lbledtValorNominal: TLabeledEdit
             Left = 466
             Top = 88
-            Width = 185
-            Height = 25
-            Cursor = crHandPoint
-            Style = csDropDownList
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -13
-            Font.Name = 'Segoe UI'
-            Font.Style = []
-            ParentFont = False
-            TabOrder = 2
-            Items.Strings = (
-              'AC'
-              #10'AL'#10
-              'AP'
-              #10'AM'
-              #10'BA'#10
-              'CE'#10
-              'DF'
-              #10'ES'
-              #10'GO'
-              #10'MA'
-              #10'MT'
-              #10'MS'
-              #10'MG'
-              #10'PA'
-              #10'PB'
-              #10'PR'
-              #10'PE'
-              #10'PI'
-              #10'RJ'
-              #10'RN'
-              #10'RS'
-              #10'RO'
-              #10'RR'
-              #10'SC'
-              #10'SP'
-              #10'SE'
-              #10'TO')
-          end
-          object lbledtValorNominal: TLabeledEdit
-            Left = 34
-            Top = 154
             Width = 185
             Height = 25
             EditLabel.Width = 91
@@ -616,12 +650,12 @@ object FmMain: TFmMain
             Font.Style = []
             MaxLength = 50
             ParentFont = False
-            TabOrder = 3
+            TabOrder = 2
           end
           object lbledtValorAberto: TLabeledEdit
-            Left = 258
-            Top = 154
-            Width = 185
+            Left = 34
+            Top = 153
+            Width = 263
             Height = 25
             EditLabel.Width = 77
             EditLabel.Height = 17
@@ -639,12 +673,13 @@ object FmMain: TFmMain
             Font.Style = []
             MaxLength = 50
             ParentFont = False
-            TabOrder = 4
+            ReadOnly = True
+            TabOrder = 3
           end
           object lbledtValorPago: TLabeledEdit
-            Left = 466
-            Top = 154
-            Width = 185
+            Left = 344
+            Top = 153
+            Width = 307
             Height = 25
             EditLabel.Width = 67
             EditLabel.Height = 17
@@ -662,26 +697,27 @@ object FmMain: TFmMain
             Font.Style = []
             MaxLength = 50
             ParentFont = False
-            TabOrder = 5
+            TabOrder = 4
           end
           object btnSalvarFinanceiro: TButton
             Left = 568
-            Top = 238
+            Top = 220
             Width = 91
             Height = 27
             Cursor = crHandPoint
             Caption = 'Salvar'
-            TabOrder = 6
+            TabOrder = 5
             OnClick = btnSalvarFinanceiroClick
           end
           object btnCancelarFinanceiro: TButton
-            Left = 471
-            Top = 238
+            Left = 466
+            Top = 220
             Width = 91
             Height = 27
             Cursor = crHandPoint
             Caption = 'Cancelar'
-            TabOrder = 7
+            TabOrder = 6
+            OnClick = btnCancelarFinanceiroClick
           end
         end
       end
@@ -694,6 +730,8 @@ object FmMain: TFmMain
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitLeft = -40
+      ExplicitTop = 18
       object btnListarPessoas: TButton
         Left = 2
         Top = 11
@@ -714,16 +752,6 @@ object FmMain: TFmMain
         TabOrder = 1
         OnClick = btnCadastrarPessoasClick
       end
-      object btnCadastrarFinanceiro: TButton
-        Left = 235
-        Top = 11
-        Width = 111
-        Height = 37
-        Cursor = crHandPoint
-        Caption = 'Cadastrar Financeiro'
-        TabOrder = 2
-        OnClick = btnCadastrarFinanceiroClick
-      end
     end
   end
   object dsPessoas: TDataSource
@@ -733,6 +761,15 @@ object FmMain: TFmMain
   end
   object QueryPessoas: TFDQuery
     Connection = DmDados.FDConnection
+    SQL.Strings = (
+      
+        'SELECT p.ID AS ID, c.LIMITE_CREDITO, c.RENDA_MENSAL, c.CNH, c.CP' +
+        'F, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p' +
+        '.UF'
+      'FROM'
+      '  CLIENTES c'
+      'INNER JOIN'
+      '  PESSOAS p ON c.PESSOA_ID = p.ID;')
     Left = 600
     Top = 16
   end

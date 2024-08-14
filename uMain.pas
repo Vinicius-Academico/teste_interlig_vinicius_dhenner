@@ -9,7 +9,8 @@ uses
   System.Character, StrUtils, Data.DB, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids, IdCharsets, uFornecedor;
+  FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids, IdCharsets, uFornecedor,
+  uFinanceiro;
 
 type
   TFmMain = class(TForm)
@@ -21,7 +22,6 @@ type
     pnlButtons: TPanel;
     btnListarPessoas: TButton;
     btnCadastrarPessoas: TButton;
-    btnCadastrarFinanceiro: TButton;
     pnlCadPessoa: TPanel;
     lbledtNome: TLabeledEdit;
     lbledtCelular: TLabeledEdit;
@@ -46,8 +46,6 @@ type
     dtVencimento: TDateTimePicker;
     lblEmissao: TLabel;
     lblVencimento: TLabel;
-    lblPessoa: TLabel;
-    cbbPessoa: TComboBox;
     lbledtValorNominal: TLabeledEdit;
     lbledtValorAberto: TLabeledEdit;
     lbledtValorPago: TLabeledEdit;
@@ -56,6 +54,13 @@ type
     gridPessoas: TDBGrid;
     dsPessoas: TDataSource;
     QueryPessoas: TFDQuery;
+    pnlClienteOuFornecedor: TPanel;
+    rgTipoPessoaGrid: TRadioGroup;
+    btnCadastrarFinanceiro: TButton;
+    btnVisualizarFinanceiro: TButton;
+    lblCodPessoa: TLabel;
+    lblPessoa: TLabel;
+    lblStatus: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
@@ -65,6 +70,8 @@ type
     procedure btnSalvarPessoaClick(Sender: TObject);
     procedure btnCancelarPessoaClick(Sender: TObject);
     procedure btnSalvarFinanceiroClick(Sender: TObject);
+    procedure rgTipoPessoaGridClick(Sender: TObject);
+    procedure btnCancelarFinanceiroClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -81,6 +88,9 @@ type
     procedure TratamentoDoCampoDateTime(Condicao: Boolean; DateTime: TDateTimePicker; Mensagem: string; var Controle: Integer);
     function ValorDoubleValido(Value: string): Boolean;
     procedure LimparRegistrosCadPessoa;
+    procedure AbreTelaListarPessoas;
+    procedure DefineFiltroGrid;
+    procedure LimparEditsFinanceiro;
   public
   end;
 
@@ -97,11 +107,18 @@ uses
 procedure TFmMain.btnCadastrarFinanceiroClick(Sender: TObject);
 begin
   pgc.ActivePageIndex := 2;
+  lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
 end;
 
 procedure TFmMain.btnCadastrarPessoasClick(Sender: TObject);
 begin
   pgc.ActivePageIndex := 1;
+end;
+
+procedure TFmMain.btnCancelarFinanceiroClick(Sender: TObject);
+begin
+  LimparEditsFinanceiro;
+  AbreTelaListarPessoas;
 end;
 
 procedure TFmMain.btnCancelarPessoaClick(Sender: TObject);
@@ -110,22 +127,27 @@ begin
 end;
 
 procedure TFmMain.LimparRegistrosCadPessoa;
-  begin
-    cbbUF.ItemIndex := -1;
-    lbledtNome.Clear;
-    lbledtCelular.Clear;
-    lbledtEmail.Clear;
-    lbledtEndereco.Clear;
-    lbledtNumero.Clear;
-    lbledtCidade.Clear;
-    lbledtLimiteCredito.Clear;
-    lbledtRendaMensal.Clear;
-    lbledtCNH.Clear;
-    lbledtCPF.Clear;
-    lbledtCNPJ.Clear;
-    lbledtIE.Clear;
-    lbledtRazaoSocial.Clear;
-  end;
+begin
+  cbbUF.ItemIndex := -1;
+  lbledtNome.Clear;
+  lbledtCelular.Clear;
+  lbledtEmail.Clear;
+  lbledtEndereco.Clear;
+  lbledtNumero.Clear;
+  lbledtCidade.Clear;
+  lbledtLimiteCredito.Clear;
+  lbledtRendaMensal.Clear;
+  lbledtCNH.Clear;
+  lbledtCPF.Clear;
+  lbledtCNPJ.Clear;
+  lbledtIE.Clear;
+  lbledtRazaoSocial.Clear;
+end;
+
+procedure TFmMain.AbreTelaListarPessoas;
+begin
+  pgc.ActivePageIndex := 0;
+end;
 
 procedure TFmMain.CancelarCadastroDePessoa;
 //======================
@@ -149,6 +171,36 @@ begin
   tsPessoas.TabVisible := false;
   tsCadastrarPessoa.TabVisible := false;
   tsFinanceiro.TabVisible := false;
+end;
+
+procedure TFmMain.LimparEditsFinanceiro;
+begin
+  dtEmissao.Date := Now;
+  dtVencimento.Date := Now;
+  lbledtValorNominal.Clear;
+  lbledtValorAberto.Clear;
+  lbledtValorPago.Clear;
+end;
+
+procedure TFmMain.DefineFiltroGrid;
+begin
+  var SqlCliente:= 'SELECT p.ID AS ID, c.LIMITE_CREDITO, c.RENDA_MENSAL, c.CNH, c.CPF, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p.UF FROM CLIENTES c INNER JOIN  PESSOAS p ON c.PESSOA_ID = p.ID;';
+  var SqlFornecedor := 'SELECT p.ID AS ID, f.CNPJ, f.INSCRICAO_ESTADUAL, f.RAZAO_SOCIAL, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p.UF FROM FORNECEDORES f INNER JOIN PESSOAS p ON f.PESSOA_ID = p.ID;';
+  case rgTipoPessoaGrid.ItemIndex of
+    0:
+      begin
+        QueryPessoas.Close;
+        QueryPessoas.SQL.Text := SqlCliente;
+        QueryPessoas.Open;
+      end;
+    1:
+      begin
+        QueryPessoas.Close;
+        QueryPessoas.SQL.Text := SqlFornecedor;
+        QueryPessoas.Open;
+      end;
+
+  end;
 end;
 
 procedure TFmMain.DefineTipoPessoa;
@@ -185,7 +237,7 @@ end;
 
 procedure TFmMain.btnListarPessoasClick(Sender: TObject);
 begin
-  pgc.ActivePageIndex := 0;
+  AbreTelaListarPessoas;
 end;
 
 procedure TFmMain.btnSalvarFinanceiroClick(Sender: TObject);
@@ -204,12 +256,6 @@ begin
   TratamentoDoCampoDateTime(dtEmissao.Date = 0, dtEmissao, 'Preencha o campo data de emissão.', Controle);
   TratamentoDoCampoDateTime(dtVencimento.Date = 0, dtVencimento, 'Preencha o campo data de emissão.', Controle);
   TratamentoDoCampoDateTime(dtEmissao.Date > dtVencimento.Date, dtVencimento, 'A emissão não pode ser maior do que o vencimento.', Controle);
-  if not (cbbPessoa.ItemIndex >= 0) then
-  begin
-    ShowMessage('Preencha o campo pessoa.');
-    cbbPessoa.SetFocus;
-    Inc(Controle);
-  end;
   TratamentoDoCampoLabelEdit(not (Length(lbledtValorNominal.Text) > 0), lbledtValorNominal, 'Preencha o campo valor nominal!', Controle);
   TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorNominal.Text), lbledtValorNominal, 'Campo "valor nominal", inválido!', Controle);
   if Length(lbledtValorAberto.Text) > 0 then
@@ -223,11 +269,16 @@ end;
 procedure TFmMain.FormCreate(Sender: TObject);
 begin
   ConectarNoBancoDeDados;
+  QueryPessoas.Connection := DmDados.FDConnection;
+  QueryPessoas.Active := True;
+  QueryPessoas.Close;
+  QueryPessoas.Open;
 end;
 
 procedure TFmMain.FormShow(Sender: TObject);
 begin
   DeixarTabsInvisiveis;
+  AbreTelaListarPessoas;
 end;
 
 function TFmMain.FornecedorValido: Boolean;
@@ -240,13 +291,19 @@ begin
   DefineTipoPessoa;
 end;
 
+procedure TFmMain.rgTipoPessoaGridClick(Sender: TObject);
+begin
+  DefineFiltroGrid;
+end;
+
 procedure TFmMain.SalvarCliente;
 var
-  Cliente : TCliente;
+  Cliente: TCliente;
 begin
   Cliente := TCliente.Create;
   Cliente.Nome := lbledtNome.Text;
   Cliente.Celular := lbledtCelular.Text;
+  Cliente.Email := lbledtEmail.Text;
   Cliente.Endereco := lbledtEndereco.Text;
   Cliente.Numero := lbledtNumero.Text;
   Cliente.Cidade := lbledtCidade.Text;
@@ -262,29 +319,41 @@ begin
 end;
 
 procedure TFmMain.SalvarFinanceiro;
+var
+  Financeiro: TFinanceiro;
 begin
+  Financeiro := TFinanceiro.Create;
   if FinanceiroValido then
+  begin
+    Financeiro.Emissao := dtEmissao.Date;
+    Financeiro.Vencimento := dtVencimento.Date;
+    Financeiro.ValorNominal := StrToFloat(lbledtValorNominal.Text);
+    Financeiro.ValorPago := StrToFloat(lbledtValorPago.Text);
+    if Financeiro.InserirNoBanco then    
     ShowMessage('Vai salvar financeiro.');
+  end;
+  FreeAndNil(Financeiro);
 end;
 
 procedure TFmMain.SalvarFornecedor;
 var
-  Fornecedor : TFornecedor;
+  Fornecedor: TFornecedor;
 begin
   Fornecedor := TFornecedor.Create;
   Fornecedor.Nome := lbledtNome.Text;
   Fornecedor.Celular := lbledtCelular.Text;
+  Fornecedor.Email := lbledtEmail.Text;
   Fornecedor.Endereco := lbledtEndereco.Text;
   Fornecedor.Numero := lbledtNumero.Text;
   Fornecedor.Cidade := lbledtCidade.Text;
   Fornecedor.UF := cbbUF.Text;
   Fornecedor.CNPJ := lbledtCNPJ.Text;
-  Fornecedor.InscricaoEstadual := lbledtRendaMensal.Text;
+  Fornecedor.InscricaoEstadual := lbledtIE.Text;
   Fornecedor.RazaoSocial := lbledtRazaoSocial.Text;
   if Fornecedor.InserirNoBanco then
     ShowMessage('Fornecedor inserido com sucesso!');
   FreeAndNil(Fornecedor);
-//  LimparRegistrosCadPessoa;
+  LimparRegistrosCadPessoa;
 end;
 
 procedure TFmMain.SalvarPessoa;
