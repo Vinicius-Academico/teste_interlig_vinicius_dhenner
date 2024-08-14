@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsPessoas
+      ActivePage = tsFinanceiro
       Align = alClient
       TabOrder = 0
       object tsPessoas: TTabSheet
@@ -97,7 +97,7 @@ object FmMain: TFmMain
             Cursor = crHandPoint
             Caption = 'Visualizar Financeiro'
             TabOrder = 2
-            OnClick = btnCadastrarFinanceiroClick
+            OnClick = btnVisualizarFinanceiroClick
           end
         end
       end

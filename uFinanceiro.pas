@@ -21,6 +21,7 @@ type
     destructor Destroy; override;
     function InserirNoBanco: Boolean;
     class function PessoaPossuiFinanceiro(CodPessoa : Integer) : Boolean;
+    procedure DefineStatus;
     property ID: Integer read FID write FID;
     property PessoaID: Integer read FPessoaID write FPessoaID;
     property Emissao: TDateTime read FEmissao write FEmissao;
@@ -36,6 +37,14 @@ implementation
 constructor TFinanceiro.Create;
 begin
   inherited Create;
+end;
+
+procedure TFinanceiro.DefineStatus;
+begin
+  if ValorNominal = ValorPago then
+    Status := 'A'
+  else
+    Status := 'Q';
 end;
 
 destructor TFinanceiro.Destroy;

@@ -72,6 +72,7 @@ type
     procedure btnSalvarFinanceiroClick(Sender: TObject);
     procedure rgTipoPessoaGridClick(Sender: TObject);
     procedure btnCancelarFinanceiroClick(Sender: TObject);
+    procedure btnVisualizarFinanceiroClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -106,9 +107,9 @@ uses
 
 procedure TFmMain.btnCadastrarFinanceiroClick(Sender: TObject);
 begin
-  if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
+  if TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
   begin
-    ShowMessage('Pessoa não possui financeiro cadastrado.');
+    ShowMessage('Pessoa já possui financeiro cadastrado.');
     exit;
   end;
   pgc.ActivePageIndex := 2;
@@ -189,7 +190,7 @@ end;
 
 procedure TFmMain.DefineFiltroGrid;
 begin
-  var SqlCliente:= 'SELECT p.ID AS ID, c.LIMITE_CREDITO, c.RENDA_MENSAL, c.CNH, c.CPF, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p.UF FROM CLIENTES c INNER JOIN  PESSOAS p ON c.PESSOA_ID = p.ID;';
+  var SqlCliente := 'SELECT p.ID AS ID, c.LIMITE_CREDITO, c.RENDA_MENSAL, c.CNH, c.CPF, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p.UF FROM CLIENTES c INNER JOIN  PESSOAS p ON c.PESSOA_ID = p.ID;';
   var SqlFornecedor := 'SELECT p.ID AS ID, f.CNPJ, f.INSCRICAO_ESTADUAL, f.RAZAO_SOCIAL, p.NOME, p.CELULAR, p.EMAIL, p.ENDERECO, p.NUMERO, p.CIDADE, p.UF FROM FORNECEDORES f INNER JOIN PESSOAS p ON f.PESSOA_ID = p.ID;';
   case rgTipoPessoaGrid.ItemIndex of
     0:
@@ -255,6 +256,17 @@ begin
   SalvarPessoa;
 end;
 
+procedure TFmMain.btnVisualizarFinanceiroClick(Sender: TObject);
+begin
+  if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
+  begin
+    ShowMessage('Pessoa não possui financeiro cadastrado.');
+    exit;
+  end;
+  pgc.ActivePageIndex := 2;
+  lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
+end;
+
 function TFmMain.FinanceiroValido: Boolean;
 begin
   var Controle := 0;
@@ -263,10 +275,11 @@ begin
   TratamentoDoCampoDateTime(dtEmissao.Date > dtVencimento.Date, dtVencimento, 'A emissão não pode ser maior do que o vencimento.', Controle);
   TratamentoDoCampoLabelEdit(not (Length(lbledtValorNominal.Text) > 0), lbledtValorNominal, 'Preencha o campo valor nominal!', Controle);
   TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorNominal.Text), lbledtValorNominal, 'Campo "valor nominal", inválido!', Controle);
-  if Length(lbledtValorAberto.Text) > 0 then
-    TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorAberto.Text), lbledtValorAberto, 'Campo "valor aberto", inválido!', Controle);
   if Length(lbledtValorPago.Text) > 0 then
+  begin
     TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorPago.Text), lbledtValorPago, 'Campo "valor pago", inválido!', Controle);
+    TratamentoDoCampoLabelEdit(StrToFloat(lbledtValorPago.Text) > StrToFloat(lbledtValorNominal.Text), lbledtValorPago, 'O valor pago não pode ser maior que o valor nominal!', Controle);
+  end;
 
   Result := Controle = 0;
 end;
@@ -334,8 +347,10 @@ begin
     Financeiro.Vencimento := dtVencimento.Date;
     Financeiro.ValorNominal := StrToFloat(lbledtValorNominal.Text);
     Financeiro.ValorPago := StrToFloat(lbledtValorPago.Text);
-    if Financeiro.InserirNoBanco then    
-    ShowMessage('Vai salvar financeiro.');
+    Financeiro.DefineStatus;
+    Financeiro.PessoaID := QueryPessoas.FieldByName('id').AsInteger;
+    if Financeiro.InserirNoBanco then
+      ShowMessage('Financeiro Salvo.');
   end;
   FreeAndNil(Financeiro);
 end;
