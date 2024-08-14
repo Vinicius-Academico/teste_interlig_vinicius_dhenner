@@ -31,10 +31,9 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsFinanceiro
+      ActivePage = tsPessoas
       Align = alClient
       TabOrder = 0
-      ExplicitTop = 54
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
         object gridPessoas: TDBGrid
@@ -58,12 +57,11 @@ object FmMain: TFmMain
           Width = 693
           Height = 65
           Align = alTop
+          BevelOuter = bvNone
           TabOrder = 1
-          ExplicitLeft = -3
-          ExplicitTop = -6
           object rgTipoPessoaGrid: TRadioGroup
             Left = 0
-            Top = 7
+            Top = 10
             Width = 177
             Height = 42
             Caption = 'Tipo Pessoa: '
@@ -83,7 +81,7 @@ object FmMain: TFmMain
           end
           object btnCadastrarFinanceiro: TButton
             Left = 300
-            Top = 11
+            Top = 17
             Width = 111
             Height = 37
             Cursor = crHandPoint
@@ -93,7 +91,7 @@ object FmMain: TFmMain
           end
           object btnVisualizarFinanceiro: TButton
             Left = 183
-            Top = 11
+            Top = 17
             Width = 111
             Height = 37
             Cursor = crHandPoint
@@ -532,8 +530,7 @@ object FmMain: TFmMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = -32
-          ExplicitTop = -39
+          ExplicitTop = 3
           object lblEmissao: TLabel
             Left = 34
             Top = 68
@@ -730,8 +727,6 @@ object FmMain: TFmMain
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = -40
-      ExplicitTop = 18
       object btnListarPessoas: TButton
         Left = 2
         Top = 11

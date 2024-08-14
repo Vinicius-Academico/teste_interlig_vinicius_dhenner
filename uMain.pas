@@ -106,6 +106,11 @@ uses
 
 procedure TFmMain.btnCadastrarFinanceiroClick(Sender: TObject);
 begin
+  if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
+  begin
+    ShowMessage('Pessoa não possui financeiro cadastrado.');
+    exit;
+  end;
   pgc.ActivePageIndex := 2;
   lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
 end;

@@ -20,6 +20,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function InserirNoBanco: Boolean;
+    class function PessoaPossuiFinanceiro(CodPessoa : Integer) : Boolean;
     property ID: Integer read FID write FID;
     property PessoaID: Integer read FPessoaID write FPessoaID;
     property Emissao: TDateTime read FEmissao write FEmissao;
@@ -71,6 +72,11 @@ begin
     end;
   end;
   Query.Free;
+end;
+
+class function TFinanceiro.PessoaPossuiFinanceiro(CodPessoa: Integer): Boolean;
+begin
+  result := false;
 end;
 
 end.
