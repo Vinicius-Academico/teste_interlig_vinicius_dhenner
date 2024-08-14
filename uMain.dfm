@@ -530,7 +530,6 @@ object FmMain: TFmMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitTop = 3
           object lblEmissao: TLabel
             Left = 34
             Top = 68

@@ -92,6 +92,7 @@ type
     procedure AbreTelaListarPessoas;
     procedure DefineFiltroGrid;
     procedure LimparEditsFinanceiro;
+    procedure VisualizarFinanceiro;
   public
   end;
 
@@ -186,6 +187,13 @@ begin
   lbledtValorNominal.Clear;
   lbledtValorAberto.Clear;
   lbledtValorPago.Clear;
+
+  btnSalvarFinanceiro.Enabled := true;
+  dtEmissao.Enabled := true;
+  dtVencimento.Enabled := true;
+  lbledtValorNominal.ReadOnly := false;
+  lbledtValorAberto.ReadOnly := false;
+  lbledtValorPago.ReadOnly := false;
 end;
 
 procedure TFmMain.DefineFiltroGrid;
@@ -258,13 +266,7 @@ end;
 
 procedure TFmMain.btnVisualizarFinanceiroClick(Sender: TObject);
 begin
-  if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
-  begin
-    ShowMessage('Pessoa não possui financeiro cadastrado.');
-    exit;
-  end;
-  pgc.ActivePageIndex := 2;
-  lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
+  VisualizarFinanceiro;
 end;
 
 function TFmMain.FinanceiroValido: Boolean;
@@ -347,10 +349,13 @@ begin
     Financeiro.Vencimento := dtVencimento.Date;
     Financeiro.ValorNominal := StrToFloat(lbledtValorNominal.Text);
     Financeiro.ValorPago := StrToFloat(lbledtValorPago.Text);
+    Financeiro.ValorAberto := Financeiro.ValorNominal - Financeiro.ValorPago;
     Financeiro.DefineStatus;
     Financeiro.PessoaID := QueryPessoas.FieldByName('id').AsInteger;
     if Financeiro.InserirNoBanco then
       ShowMessage('Financeiro Salvo.');
+    LimparEditsFinanceiro;
+    AbreTelaListarPessoas;
   end;
   FreeAndNil(Financeiro);
 end;
@@ -485,6 +490,42 @@ begin
     Result := False;
     Exit;
   end;
+end;
+
+procedure TFmMain.VisualizarFinanceiro;
+
+  procedure HabilitarEditsParaVisualizacao;
+  begin
+    btnSalvarFinanceiro.Enabled := false;
+    dtEmissao.Enabled := false;
+    dtVencimento.Enabled := false;
+    lbledtValorNominal.ReadOnly := true;
+    lbledtValorAberto.ReadOnly := true;
+    lbledtValorPago.ReadOnly := true;
+  end;
+
+var
+  Financeiro: TFinanceiro;
+begin
+  if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
+  begin
+    ShowMessage('Pessoa não possui financeiro cadastrado.');
+    exit;
+  end;
+  pgc.ActivePageIndex := 2;
+
+  HabilitarEditsParaVisualizacao;
+
+  lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
+  Financeiro := TFinanceiro.Create;
+  Financeiro.CarregarDoBanco(QueryPessoas.FieldByName('id').AsInteger);
+  dtEmissao.DateTime := Financeiro.Emissao;
+  dtVencimento.DateTime := Financeiro.Vencimento;
+  lbledtValorNominal.Text := FloatToStr(Financeiro.ValorNominal);
+  lbledtValorAberto.Text := FloatToStr(Financeiro.ValorAberto);
+  lbledtValorPago.Text := FloatToStr(Financeiro.ValorPago);
+  lblStatus.Caption := 'Status = ' + Financeiro.Status;
+  Financeiro.Free;
 end;
 
 function TFmMain.ClienteValido: Boolean;

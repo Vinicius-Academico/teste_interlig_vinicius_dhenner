@@ -8,7 +8,6 @@ uses
 type
   TFinanceiro = class
   private
-    FID: Integer;
     FPessoaID: Integer;
     FEmissao: TDateTime;
     FVencimento: TDateTime;
@@ -21,8 +20,8 @@ type
     destructor Destroy; override;
     function InserirNoBanco: Boolean;
     class function PessoaPossuiFinanceiro(CodPessoa : Integer) : Boolean;
+    procedure CarregarDoBanco(ID: Integer);
     procedure DefineStatus;
-    property ID: Integer read FID write FID;
     property PessoaID: Integer read FPessoaID write FPessoaID;
     property Emissao: TDateTime read FEmissao write FEmissao;
     property Vencimento: TDateTime read FVencimento write FVencimento;
@@ -33,6 +32,42 @@ type
   end;
 
 implementation
+
+procedure TFinanceiro.CarregarDoBanco(ID: Integer);
+var
+  Query: TFDQuery;
+begin
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DmDados.FDConnection;
+    Query.SQL.Text := 'SELECT PESSOA_ID, EMISSAO, VENCIMENTO, VALOR_NOMINAL, VALOR_ABERTO, VALOR_PAGO, STATUS ' +
+                      'FROM FINANCEIRO WHERE PESSOA_ID = :ID';
+    Query.ParamByName('ID').AsInteger := ID;
+    Query.Open;
+
+    if not Query.IsEmpty then
+    begin
+      FPessoaID := Query.FieldByName('PESSOA_ID').AsInteger;
+      FEmissao := Query.FieldByName('EMISSAO').AsDateTime;
+      FVencimento := Query.FieldByName('VENCIMENTO').AsDateTime;
+      FValorNominal := Query.FieldByName('VALOR_NOMINAL').AsCurrency;
+      FValorAberto := Query.FieldByName('VALOR_ABERTO').AsCurrency;
+      FValorPago := Query.FieldByName('VALOR_PAGO').AsCurrency;
+      if Query.FieldByName('STATUS').AsString = 'A' then
+        FStatus := 'aberto'
+      else if Query.FieldByName('STATUS').AsString = 'Q' then
+         FStatus := 'quitado';
+
+    end
+    else
+    begin
+      raise Exception.Create('Registro não encontrado no banco de dados.');
+    end;
+  finally
+    Query.Free;
+  end;
+end;
+
 
 constructor TFinanceiro.Create;
 begin
@@ -60,8 +95,7 @@ begin
   Query := TFDQuery.Create(nil);
   try
     Query.Connection := DmDados.FDConnection;
-    Query.SQL.Text := 'INSERT INTO FINANCEIRO ' + '(ID, PESSOA_ID, EMISSAO, VENCIMENTO, VALOR_NOMINAL, VALOR_ABERTO, VALOR_PAGO, STATUS) ' + 'VALUES (:ID, :PessoaID, :Emissao, :Vencimento, :ValorNominal, :ValorAberto, :ValorPago, :Status)';
-    Query.ParamByName('ID').AsInteger := FID;
+    Query.SQL.Text := 'INSERT INTO FINANCEIRO ' + '(PESSOA_ID, EMISSAO, VENCIMENTO, VALOR_NOMINAL, VALOR_ABERTO, VALOR_PAGO, STATUS) ' + 'VALUES (:PessoaID, :Emissao, :Vencimento, :ValorNominal, :ValorAberto, :ValorPago, :Status)';
     Query.ParamByName('PessoaID').AsInteger := FPessoaID;
     Query.ParamByName('Emissao').AsDateTime := FEmissao;
     Query.ParamByName('Vencimento').AsDateTime := FVencimento;
@@ -84,8 +118,22 @@ begin
 end;
 
 class function TFinanceiro.PessoaPossuiFinanceiro(CodPessoa: Integer): Boolean;
+var
+  Query: TFDQuery;
 begin
-  result := false;
+  Result := False;
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DmDados.FDConnection;
+    Query.SQL.Text := 'SELECT COUNT(*) FROM FINANCEIRO WHERE PESSOA_ID = :CodPessoa';
+    Query.ParamByName('CodPessoa').AsInteger := CodPessoa;
+    Query.Open;
+
+    Result := Query.Fields[0].AsInteger > 0;
+  finally
+    Query.Free;
+  end;
 end;
 
 end.
