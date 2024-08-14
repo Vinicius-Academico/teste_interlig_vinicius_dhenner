@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsCadastrarPessoa
+      ActivePage = tsFinanceiro
       Align = alClient
       TabOrder = 0
       ExplicitTop = 54
@@ -466,12 +466,14 @@ object FmMain: TFmMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitLeft = -40
+          ExplicitTop = -56
           object lblEmissao: TLabel
             Left = 34
             Top = 68
-            Width = 55
+            Width = 60
             Height = 16
-            Caption = 'Emiss'#227'o:'
+            Caption = 'Emiss'#227'o:*'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -482,9 +484,9 @@ object FmMain: TFmMain
           object lblVencimento: TLabel
             Left = 258
             Top = 68
-            Width = 72
+            Width = 77
             Height = 16
-            Caption = 'Vencimento:'
+            Caption = 'Vencimento:*'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -495,9 +497,9 @@ object FmMain: TFmMain
           object lblPessoa: TLabel
             Left = 466
             Top = 68
-            Width = 48
+            Width = 53
             Height = 16
-            Caption = 'Pessoa:'
+            Caption = 'Pessoa:*'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -579,13 +581,13 @@ object FmMain: TFmMain
               #10'TO')
           end
           object lbledtValorNominal: TLabeledEdit
-            Left = 258
+            Left = 34
             Top = 154
             Width = 185
             Height = 25
-            EditLabel.Width = 86
+            EditLabel.Width = 91
             EditLabel.Height = 17
-            EditLabel.Caption = 'Valor Nominal:'
+            EditLabel.Caption = 'Valor Nominal:*'
             EditLabel.Font.Charset = DEFAULT_CHARSET
             EditLabel.Font.Color = clWindowText
             EditLabel.Font.Height = -13
@@ -602,7 +604,7 @@ object FmMain: TFmMain
             TabOrder = 3
           end
           object lbledtValorAberto: TLabeledEdit
-            Left = 34
+            Left = 258
             Top = 154
             Width = 185
             Height = 25
@@ -655,6 +657,7 @@ object FmMain: TFmMain
             Cursor = crHandPoint
             Caption = 'Salvar'
             TabOrder = 6
+            OnClick = btnSalvarFinanceiroClick
           end
           object btnCancelarFinanceiro: TButton
             Left = 471

@@ -28,7 +28,7 @@ type
     property ValorNominal: Currency read FValorNominal write FValorNominal;
     property ValorAberto: Currency read FValorAberto write FValorAberto;
     property ValorPago: Currency read FValorPago write FValorPago;
-    property Status: Char read FStatus write SetStatusAsChar(AStatus: Char);
+    property Status: Char read FStatus write SetStatusAsChar;
     property StatusAsChar: Char read GetStatusAsChar write SetStatusAsChar;
   end;
 

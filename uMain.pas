@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.ExtCtrls, uDataModule, Vcl.StdCtrls, Vcl.ComCtrls;
+  Vcl.ExtCtrls, uDataModule, Vcl.StdCtrls, Vcl.ComCtrls, System.Math,
+  System.Character, StrUtils;
 
 type
   TFmMain = class(TForm)
@@ -57,6 +58,7 @@ type
     procedure rgTipoPessoaClick(Sender: TObject);
     procedure btnSalvarPessoaClick(Sender: TObject);
     procedure btnCancelarPessoaClick(Sender: TObject);
+    procedure btnSalvarFinanceiroClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -69,7 +71,9 @@ type
     procedure SalvarFornecedor;
     procedure SalvarFinanceiro;
     function FinanceiroValido: Boolean;
-    procedure TratamentoDoCampoLabelEdit(Condicao: Boolean; edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
+    procedure TratamentoDoCampoLabelEdit(Condicao: Boolean; Edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
+    procedure TratamentoDoCampoDateTime(Condicao: Boolean; DateTime: TDateTimePicker; Mensagem: string; var Controle: Integer);
+    function ValorDoubleValido(Value: string): Boolean;
   public
   end;
 
@@ -177,6 +181,11 @@ begin
   pgc.ActivePageIndex := 0;
 end;
 
+procedure TFmMain.btnSalvarFinanceiroClick(Sender: TObject);
+begin
+  SalvarFinanceiro;
+end;
+
 procedure TFmMain.btnSalvarPessoaClick(Sender: TObject);
 begin
   SalvarPessoa;
@@ -184,7 +193,22 @@ end;
 
 function TFmMain.FinanceiroValido: Boolean;
 begin
-  Result := true;
+  var Controle := 0;
+  TratamentoDoCampoDateTime(dtEmissao.Date = 0, dtEmissao, 'Preencha o campo data de emissão.', Controle);
+  TratamentoDoCampoDateTime(dtVencimento.Date = 0, dtVencimento, 'Preencha o campo data de emissão.', Controle);
+  TratamentoDoCampoDateTime(dtEmissao.Date > dtVencimento.Date, dtVencimento, 'A emissão não pode ser maior do que o vencimento.', Controle);
+  if not (cbbPessoa.ItemIndex >= 0) then
+  begin
+    ShowMessage('Preencha o campo pessoa.');
+    cbbPessoa.SetFocus;
+    Inc(Controle);
+  end;
+  TratamentoDoCampoLabelEdit(not (Length(lbledtValorNominal.Text) > 0), lbledtValorNominal, 'Preencha o campo valor nominal!', Controle);
+  TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorNominal.Text), lbledtValorNominal, 'Campo "valor nominal", inválido!', Controle);
+  TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorAberto.Text), lbledtValorAberto, 'Campo "valor aberto", inválido!', Controle);
+  TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorPago.Text), lbledtValorPago, 'Campo "valor pago", inválido!', Controle);
+
+  Result := Controle = 0;
 end;
 
 procedure TFmMain.FormCreate(Sender: TObject);
@@ -214,24 +238,8 @@ end;
 
 procedure TFmMain.SalvarFinanceiro;
 begin
-  if (dtEmissao.Date = 0) then
-  begin
-    ShowMessage('Preencha o campo data de emissão.');
-    dtEmissao.SetFocus;
-    exit;
-  end;
-  if (dtVencimento.Date = 0) then
-  begin
-    ShowMessage('Preencha o campo data de emissão.');
-    dtVencimento.SetFocus;
-    exit;
-  end;
-  if not (cbbPessoa.ItemIndex >= 0) then
-  begin
-    ShowMessage('Preencha o campo pessoa.');
-    cbbPessoa.SetFocus;
-    exit;
-  end;
+  if FinanceiroValido then
+    ShowMessage('Vai salvar financeiro.');
 end;
 
 procedure TFmMain.SalvarFornecedor;
@@ -244,19 +252,11 @@ begin
   //==========================
   //Trata is campos que sao utilizados por
   //cliente e fornecedor
-  if Length(lbledtNome.text) < 3 then
-  begin
-    ShowMessage('Preencha o campo nome!');
-    lbledtNome.SetFocus;
-    Exit;
-  end;
-
-  if Length(lbledtCelular.text) < 8 then
-  begin
-    ShowMessage('Preencha o campo celular!');
-    lbledtCelular.SetFocus;
-    Exit;
-  end;
+  var Controle := 0;
+  TratamentoDoCampoLabelEdit(Length(lbledtNome.text) < 3, lbledtNome, 'Preencha o campo nome!', Controle);
+  TratamentoDoCampoLabelEdit(Length(lbledtCelular.text) < 8, lbledtCelular, 'Preencha o campo celular!', Controle);
+  if Controle > 0 then
+    exit;
   //==========================
 
   //==========================
@@ -271,6 +271,33 @@ begin
 
   end;
   //==========================
+end;
+
+procedure TFmMain.TratamentoDoCampoDateTime(Condicao: Boolean; DateTime: TDateTimePicker; Mensagem: string; var Controle: Integer);
+//=========================================
+//Esta funcao compara os campos de TLabelEdit,
+//evitando excesso de if/else
+//=========================================
+
+//=========================================
+//So vai entrar na condicao caso a variavel
+//de controle esteja zero, isso serve para
+//pausar as mensagens de erro no primeiro
+//erro. Caso o erro ocorra, sera incrementado
+//na variavel de controle para que os outros
+//campos seguintes nao entram na condicao
+//impedindo múltiplas mensagens de erro.
+//=========================================
+begin
+  if Controle = 0 then
+  begin
+    if Condicao then
+    begin
+      ShowMessage(Mensagem);
+      DateTime.setfocus;
+      Inc(Controle);
+    end;
+  end;
 end;
 
 procedure TFmMain.TratamentoDoCampoLabelEdit(Condicao: Boolean; edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
@@ -297,6 +324,33 @@ begin
       edt.setfocus;
       Inc(Controle);
     end;
+  end;
+end;
+
+function TFmMain.ValorDoubleValido(Value: string): Boolean;
+var
+  I: Integer;
+  NumVirgulas: Integer;
+begin
+  Result := True;
+  NumVirgulas := 0;
+
+  for I := 1 to Length(Value) do
+  begin
+    if not (Value[I] in ['0'..'9', ',']) then
+    begin
+      Result := False;
+      Exit;
+    end;
+
+    if Value[I] = ',' then
+      Inc(NumVirgulas);
+  end;
+
+  if NumVirgulas > 1 then
+  begin
+    Result := False;
+    Exit;
   end;
 end;
 
