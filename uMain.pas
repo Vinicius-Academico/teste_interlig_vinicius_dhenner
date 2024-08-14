@@ -6,7 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   Vcl.ExtCtrls, uDataModule, Vcl.StdCtrls, Vcl.ComCtrls, System.Math,
-  System.Character, StrUtils;
+  System.Character, StrUtils, Data.DB, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids, IdCharsets, uFornecedor;
 
 type
   TFmMain = class(TForm)
@@ -50,6 +53,9 @@ type
     lbledtValorPago: TLabeledEdit;
     btnSalvarFinanceiro: TButton;
     btnCancelarFinanceiro: TButton;
+    gridPessoas: TDBGrid;
+    dsPessoas: TDataSource;
+    QueryPessoas: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
@@ -74,6 +80,7 @@ type
     procedure TratamentoDoCampoLabelEdit(Condicao: Boolean; Edt: TLabeledEdit; Mensagem: string; var Controle: Integer);
     procedure TratamentoDoCampoDateTime(Condicao: Boolean; DateTime: TDateTimePicker; Mensagem: string; var Controle: Integer);
     function ValorDoubleValido(Value: string): Boolean;
+    procedure LimparRegistrosCadPessoa;
   public
   end;
 
@@ -81,6 +88,9 @@ var
   FmMain: TFmMain;
 
 implementation
+
+uses
+  uCliente;
 
 {$R *.dfm}
 
@@ -99,9 +109,7 @@ begin
   CancelarCadastroDePessoa;
 end;
 
-procedure TFmMain.CancelarCadastroDePessoa;
-
-  procedure LimparRegistrosCadPessoa;
+procedure TFmMain.LimparRegistrosCadPessoa;
   begin
     cbbUF.ItemIndex := -1;
     lbledtNome.Clear;
@@ -118,13 +126,12 @@ procedure TFmMain.CancelarCadastroDePessoa;
     lbledtIE.Clear;
     lbledtRazaoSocial.Clear;
   end;
+
+procedure TFmMain.CancelarCadastroDePessoa;
 //======================
 //Sai da tela de cadastro
 //e limpa os edits
 //======================
-
-
-
 begin
   pgc.ActivePageIndex := 0;
   LimparRegistrosCadPessoa;
@@ -205,8 +212,10 @@ begin
   end;
   TratamentoDoCampoLabelEdit(not (Length(lbledtValorNominal.Text) > 0), lbledtValorNominal, 'Preencha o campo valor nominal!', Controle);
   TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorNominal.Text), lbledtValorNominal, 'Campo "valor nominal", inválido!', Controle);
-  TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorAberto.Text), lbledtValorAberto, 'Campo "valor aberto", inválido!', Controle);
-  TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorPago.Text), lbledtValorPago, 'Campo "valor pago", inválido!', Controle);
+  if Length(lbledtValorAberto.Text) > 0 then
+    TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorAberto.Text), lbledtValorAberto, 'Campo "valor aberto", inválido!', Controle);
+  if Length(lbledtValorPago.Text) > 0 then
+    TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtValorPago.Text), lbledtValorPago, 'Campo "valor pago", inválido!', Controle);
 
   Result := Controle = 0;
 end;
@@ -232,8 +241,24 @@ begin
 end;
 
 procedure TFmMain.SalvarCliente;
+var
+  Cliente : TCliente;
 begin
-  ShowMessage('Vai salvar cliente');
+  Cliente := TCliente.Create;
+  Cliente.Nome := lbledtNome.Text;
+  Cliente.Celular := lbledtCelular.Text;
+  Cliente.Endereco := lbledtEndereco.Text;
+  Cliente.Numero := lbledtNumero.Text;
+  Cliente.Cidade := lbledtCidade.Text;
+  Cliente.UF := cbbUF.Text;
+  Cliente.LimiteCredito := StrToFloat(lbledtLimiteCredito.Text);
+  Cliente.RendaMensal := StrToFloat(lbledtRendaMensal.Text);
+  Cliente.CNH := lbledtCNH.Text;
+  Cliente.CPF := lbledtCPF.Text;
+  if Cliente.InserirNoBanco then
+    ShowMessage('Cliente inserido com sucesso!');
+  FreeAndNil(Cliente);
+  LimparRegistrosCadPessoa;
 end;
 
 procedure TFmMain.SalvarFinanceiro;
@@ -243,8 +268,23 @@ begin
 end;
 
 procedure TFmMain.SalvarFornecedor;
+var
+  Fornecedor : TFornecedor;
 begin
-  ShowMessage('Vai salvar fornecedor');
+  Fornecedor := TFornecedor.Create;
+  Fornecedor.Nome := lbledtNome.Text;
+  Fornecedor.Celular := lbledtCelular.Text;
+  Fornecedor.Endereco := lbledtEndereco.Text;
+  Fornecedor.Numero := lbledtNumero.Text;
+  Fornecedor.Cidade := lbledtCidade.Text;
+  Fornecedor.UF := cbbUF.Text;
+  Fornecedor.CNPJ := lbledtCNPJ.Text;
+  Fornecedor.InscricaoEstadual := lbledtRendaMensal.Text;
+  Fornecedor.RazaoSocial := lbledtRazaoSocial.Text;
+  if Fornecedor.InserirNoBanco then
+    ShowMessage('Fornecedor inserido com sucesso!');
+  FreeAndNil(Fornecedor);
+//  LimparRegistrosCadPessoa;
 end;
 
 procedure TFmMain.SalvarPessoa;
@@ -328,6 +368,10 @@ begin
 end;
 
 function TFmMain.ValorDoubleValido(Value: string): Boolean;
+//==================================
+//Verifica se a string eh compativel
+//com valor Double usando virgula
+//==================================
 var
   I: Integer;
   NumVirgulas: Integer;
@@ -358,6 +402,10 @@ function TFmMain.ClienteValido: Boolean;
 begin
   var Controle := 0;
   TratamentoDoCampoLabelEdit(not (Length(lbledtCpf.Text) = 11), lbledtCpf, 'Preencha o campo CPF!', Controle);
+  if Length(lbledtLimiteCredito.Text) > 0 then
+    TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtLimiteCredito.Text), lbledtLimiteCredito, 'Campo "limite crédito" inválido.', Controle);
+  if Length(lbledtRendaMensal.Text) > 0 then
+    TratamentoDoCampoLabelEdit(not ValorDoubleValido(lbledtRendaMensal.Text), lbledtRendaMensal, 'Campo "renda mensal" inválido.', Controle);
   Result := Controle = 0;
 end;
 

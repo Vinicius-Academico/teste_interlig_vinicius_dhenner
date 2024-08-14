@@ -12,7 +12,6 @@ uses
 
 type
   TDmDados = class(TDataModule)
-    FDQuery: TFDQuery;
     FDConnection: TFDConnection;
     FDPhysFBDriverLink: TFDPhysFBDriverLink;
   private

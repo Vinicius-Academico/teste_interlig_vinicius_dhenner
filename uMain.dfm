@@ -31,12 +31,26 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsFinanceiro
+      ActivePage = tsCadastrarPessoa
       Align = alClient
       TabOrder = 0
       ExplicitTop = 54
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
+        object gridPessoas: TDBGrid
+          Left = 0
+          Top = 0
+          Width = 693
+          Height = 332
+          Align = alClient
+          DataSource = dsPessoas
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+        end
       end
       object tsCadastrarPessoa: TTabSheet
         Caption = 'tsCadastrarPessoa'
@@ -160,7 +174,7 @@ object FmMain: TFmMain
           end
           object lbledtNumero: TLabeledEdit
             Left = 469
-            Top = 128
+            Top = 121
             Width = 186
             Height = 25
             EditLabel.Width = 51
@@ -216,36 +230,37 @@ object FmMain: TFmMain
             Font.Height = -13
             Font.Name = 'Segoe UI'
             Font.Style = []
+            MaxLength = 2
             ParentFont = False
             TabOrder = 6
             Items.Strings = (
               'AC'
               #10'AL'#10
               'AP'
-              #10'AM'
-              #10'BA'#10
-              'CE'#10
+              'AM'
+              'BA'
+              #10'CE'#10
               'DF'
-              #10'ES'
-              #10'GO'
-              #10'MA'
-              #10'MT'
-              #10'MS'
-              #10'MG'
-              #10'PA'
-              #10'PB'
-              #10'PR'
-              #10'PE'
-              #10'PI'
-              #10'RJ'
-              #10'RN'
-              #10'RS'
-              #10'RO'
-              #10'RR'
-              #10'SC'
-              #10'SP'
-              #10'SE'
-              #10'TO')
+              'ES'
+              'GO'
+              'MA'
+              'MT'
+              'MS'
+              'MG'
+              'PA'
+              'PB'
+              'PR'
+              'PE'
+              'PI'
+              'RJ'
+              'RN'
+              'RS'
+              'RO'
+              'RR'
+              'SC'
+              'SP'
+              'SE'
+              'TO')
           end
           object rgTipoPessoa: TRadioGroup
             Left = 39
@@ -710,5 +725,15 @@ object FmMain: TFmMain
         OnClick = btnCadastrarFinanceiroClick
       end
     end
+  end
+  object dsPessoas: TDataSource
+    DataSet = QueryPessoas
+    Left = 656
+    Top = 8
+  end
+  object QueryPessoas: TFDQuery
+    Connection = DmDados.FDConnection
+    Left = 600
+    Top = 16
   end
 end
