@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsCadastrarPessoa
+      ActivePage = tsVisualizarFinanceiros
       Align = alClient
       TabOrder = 0
       object tsPessoas: TTabSheet
@@ -577,19 +577,6 @@ object FmMain: TFmMain
             Width = 48
             Height = 16
             Caption = 'Pessoa:'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -13
-            Font.Name = 'Segoe UI '
-            Font.Style = []
-            ParentFont = False
-          end
-          object lblStatus: TLabel
-            Left = 34
-            Top = 224
-            Width = 42
-            Height = 16
-            Caption = 'Status:'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13

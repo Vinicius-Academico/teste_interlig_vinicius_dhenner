@@ -60,7 +60,6 @@ type
     btnVisualizarFinanceiro: TButton;
     lblCodPessoa: TLabel;
     lblPessoa: TLabel;
-    lblStatus: TLabel;
     tsVisualizarFinanceiros: TTabSheet;
     pnlVisuFinanceiros: TPanel;
     pnlVisuFinanceirosTop: TPanel;
@@ -150,12 +149,11 @@ begin
     Exit;
   end;
 
-  if QueryFinanceiros.FieldByName('vencimento').AsDateTime < Now  then
+  if not (QueryFinanceiros.FieldByName('vencimento').AsDateTime >= Now)  then
   begin
     ShowMessage('Título já vencido');
     Exit;
   end;
-
   PagamentoFinanceiro := TFinanceiroPagamentos.Create;
   PagamentoFinanceiro.PreencherValores(QueryFinanceiros.FieldByName('id_financeiro').AsInteger);
   PagamentoFinanceiro.BaixaCompleta;
@@ -183,7 +181,7 @@ begin
     Exit;
   end;
 
-  if QueryFinanceiros.FieldByName('vencimento').AsDateTime < Now  then
+  if not (QueryFinanceiros.FieldByName('vencimento').AsDateTime >= Now)  then
   begin
     ShowMessage('Título já vencido');
     Exit;
@@ -310,13 +308,6 @@ begin
   lbledtValorNominal.Clear;
   lbledtValorAberto.Clear;
   lbledtValorPago.Clear;
-
-  btnSalvarFinanceiro.Enabled := true;
-  dtEmissao.Enabled := true;
-  dtVencimento.Enabled := true;
-  lbledtValorNominal.ReadOnly := false;
-  lbledtValorAberto.ReadOnly := false;
-  lbledtValorPago.ReadOnly := false;
 end;
 
 procedure TFmMain.DefineFiltroGrid;
@@ -436,6 +427,8 @@ begin
   QueryPessoas.Active := True;
   QueryPessoas.Close;
   QueryPessoas.Open;
+  dtEmissao.Date := Now;
+  dtVencimento.Date := Now;
 end;
 
 procedure TFmMain.FormShow(Sender: TObject);
