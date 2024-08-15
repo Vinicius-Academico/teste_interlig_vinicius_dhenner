@@ -73,6 +73,12 @@ type
     btnBaixaParcial: TButton;
     btnBaixaCompleta: TButton;
     btnVisualizarFinanceiros: TButton;
+    tsVisualizarBaixas: TTabSheet;
+    gridPagamentos: TDBGrid;
+    btnVoltar: TButton;
+    btnVisualizarBaixas: TButton;
+    dsBaixas: TDataSource;
+    QueryBaixas: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
@@ -88,6 +94,9 @@ type
     procedure btnPesquisarPessoaClick(Sender: TObject);
     procedure btnVisualizarFinanceirosClick(Sender: TObject);
     procedure btnBaixaCompletaClick(Sender: TObject);
+    procedure btnBaixaParcialClick(Sender: TObject);
+    procedure btnVoltarClick(Sender: TObject);
+    procedure btnVisualizarBaixasClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -110,6 +119,8 @@ type
     procedure VisualizarFinanceiro;
     procedure PesquisarPessoa;
     procedure BaixaCompleta;
+    procedure BaixaParcial;
+    procedure VisualizarBaixas;
   public
   end;
 
@@ -125,7 +136,7 @@ uses
 
 procedure TFmMain.BaixaCompleta;
 var
-   PagamentoFinanceiro : TFinanceiroPagamentos;
+  PagamentoFinanceiro: TFinanceiroPagamentos;
 begin
   if QueryFinanceiros.IsEmpty then
   begin
@@ -139,17 +150,76 @@ begin
     Exit;
   end;
 
+  if QueryFinanceiros.FieldByName('vencimento').AsDateTime < Now  then
+  begin
+    ShowMessage('Título já vencido');
+    Exit;
+  end;
+
   PagamentoFinanceiro := TFinanceiroPagamentos.Create;
   PagamentoFinanceiro.PreencherValores(QueryFinanceiros.FieldByName('id_financeiro').AsInteger);
   PagamentoFinanceiro.BaixaCompleta;
+  PagamentoFinanceiro.DataPagamento := now;
   if PagamentoFinanceiro.InserirNoBanco then
     ShowMessage('Baixa efetuada com sucesso!');
   PagamentoFinanceiro.Free;
+  PesquisarPessoa;
+end;
+
+procedure TFmMain.BaixaParcial;
+var
+  PagamentoFinanceiro: TFinanceiroPagamentos;
+  Valor: Double;
+begin
+  if QueryFinanceiros.IsEmpty then
+  begin
+    ShowMessage('Registro Vazio');
+    Exit;
+  end;
+
+  if QueryFinanceiros.FieldByName('status').AsString = 'Q' then
+  begin
+    ShowMessage('Título já quitado');
+    Exit;
+  end;
+
+  if QueryFinanceiros.FieldByName('vencimento').AsDateTime < Now  then
+  begin
+    ShowMessage('Título já vencido');
+    Exit;
+  end;
+
+  try
+    Valor := StrToFloat(InputBox('Informe o valor da baixa:', 'Informe o valor da baixa:', ''));
+  except
+    ShowMessage('Preencha um valor correto');
+    exit;
+  end;
+
+  PagamentoFinanceiro := TFinanceiroPagamentos.Create;
+  PagamentoFinanceiro.PreencherValores(QueryFinanceiros.FieldByName('id_financeiro').AsInteger);
+  PagamentoFinanceiro.DataPagamento := now;
+  if Valor <= PagamentoFinanceiro.ValorAberto then
+  begin
+    PagamentoFinanceiro.BaixaParcial(Valor);
+    if PagamentoFinanceiro.InserirNoBanco then
+      ShowMessage('Baixa efetuada com sucesso!');
+  end
+  else
+    ShowMessage('Valor pago maior do que o valor aberto.');
+
+  PagamentoFinanceiro.Free;
+  PesquisarPessoa;
 end;
 
 procedure TFmMain.btnBaixaCompletaClick(Sender: TObject);
 begin
   BaixaCompleta;
+end;
+
+procedure TFmMain.btnBaixaParcialClick(Sender: TObject);
+begin
+  BaixaParcial;
 end;
 
 procedure TFmMain.btnCadastrarFinanceiroClick(Sender: TObject);
@@ -194,9 +264,12 @@ end;
 
 procedure TFmMain.PesquisarPessoa;
 begin
-  QueryFinanceiros.Close;
-  QueryFinanceiros.SQL.Text := 'select p.id as id_pessoas, f.id as id_financeiro, p.nome, f.vencimento, f.valor_nominal, f.valor_aberto, f.valor_pago, f.status from financeiro as f inner join pessoas as p on (p.id = f.pessoa_id) where p.id = ' + lbledtPesquisaPessoa.Text;
-  QueryFinanceiros.Open;
+  if Length(lbledtPesquisaPessoa.Text) > 0 then
+  begin
+    QueryFinanceiros.Close;
+    QueryFinanceiros.SQL.Text := 'select p.id as id_pessoas, f.id as id_financeiro, p.nome, f.vencimento, f.valor_nominal, f.valor_aberto, f.valor_pago, f.status from financeiro as f inner join pessoas as p on (p.id = f.pessoa_id) where p.id = ' + lbledtPesquisaPessoa.Text;
+    QueryFinanceiros.Open;
+  end;
 end;
 
 procedure TFmMain.AbreTelaListarPessoas;
@@ -227,6 +300,7 @@ begin
   tsCadastrarPessoa.TabVisible := false;
   tsFinanceiro.TabVisible := false;
   tsVisualizarFinanceiros.TabVisible := false;
+  tsVisualizarBaixas.TabVisible := false;
 end;
 
 procedure TFmMain.LimparEditsFinanceiro;
@@ -310,12 +384,17 @@ end;
 
 procedure TFmMain.btnSalvarFinanceiroClick(Sender: TObject);
 begin
-    SalvarFinanceiro;
+  SalvarFinanceiro;
 end;
 
 procedure TFmMain.btnSalvarPessoaClick(Sender: TObject);
 begin
   SalvarPessoa;
+end;
+
+procedure TFmMain.btnVisualizarBaixasClick(Sender: TObject);
+begin
+  VisualizarBaixas;
 end;
 
 procedure TFmMain.btnVisualizarFinanceiroClick(Sender: TObject);
@@ -324,6 +403,11 @@ begin
 end;
 
 procedure TFmMain.btnVisualizarFinanceirosClick(Sender: TObject);
+begin
+  pgc.ActivePageIndex := 3;
+end;
+
+procedure TFmMain.btnVoltarClick(Sender: TObject);
 begin
   pgc.ActivePageIndex := 3;
 end;
@@ -551,6 +635,19 @@ begin
   end;
 end;
 
+procedure TFmMain.VisualizarBaixas;
+begin
+  if QueryFinanceiros.IsEmpty then
+  begin
+    ShowMessage('Registro Vazio');
+    Exit;
+  end;
+  pgc.ActivePageIndex := 4;
+  QueryBaixas.Close;
+  QueryBaixas.SQL.Text := 'select * from financeiro_pagamentos where financeiro_id = ' + QueryFinanceiros.FieldByName('id_financeiro').AsString + ';';
+  QueryBaixas.Open;
+end;
+
 procedure TFmMain.VisualizarFinanceiro;
 begin
   if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
@@ -558,9 +655,9 @@ begin
     ShowMessage('Pessoa não possui financeiro cadastrado.');
     exit;
   end;
-    pgc.ActivePageIndex := 3;
-    lbledtPesquisaPessoa.Text := QueryPessoas.FieldByName('id').AsString;
-    PesquisarPessoa;
+  pgc.ActivePageIndex := 3;
+  lbledtPesquisaPessoa.Text := QueryPessoas.FieldByName('id').AsString;
+  PesquisarPessoa;
 end;
 
 function TFmMain.ClienteValido: Boolean;

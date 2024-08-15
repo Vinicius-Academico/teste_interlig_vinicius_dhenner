@@ -96,7 +96,10 @@ begin
 
     Query.SQL.Text := 'UPDATE FINANCEIRO ' + 'SET VALOR_PAGO = :ValorPago, STATUS = :Status, VALOR_NOMINAL = :ValorNominal, VALOR_ABERTO = :ValorAberto ' + 'WHERE ID = :FinanceiroID';
     Query.ParamByName('ValorPago').AsCurrency := FValorNominal;
-    Query.ParamByName('Status').AsString := 'Q';
+    if ValorAberto = 0 then
+    Query.ParamByName('Status').AsString := 'Q'
+    else
+     Query.ParamByName('Status').AsString := 'A';
     Query.ParamByName('FinanceiroID').AsInteger := FFinanceiroID;
     Query.ParamByName('ValorNominal').AsCurrency := FValorNominal;
     Query.ParamByName('ValorAberto').AsCurrency := FValorAberto;

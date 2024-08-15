@@ -31,10 +31,9 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsFinanceiro
+      ActivePage = tsCadastrarPessoa
       Align = alClient
       TabOrder = 0
-      ExplicitTop = 54
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
         object gridPessoas: TDBGrid
@@ -787,7 +786,7 @@ object FmMain: TFmMain
               Cursor = crHandPoint
               Caption = 'Baixa Parcial'
               TabOrder = 2
-              OnClick = btnSalvarFinanceiroClick
+              OnClick = btnBaixaParcialClick
             end
             object btnBaixaCompleta: TButton
               Left = 403
@@ -798,6 +797,16 @@ object FmMain: TFmMain
               Caption = 'Baixa Completa'
               TabOrder = 3
               OnClick = btnBaixaCompletaClick
+            end
+            object btnVisualizarBaixas: TButton
+              Left = 500
+              Top = 26
+              Width = 93
+              Height = 27
+              Cursor = crHandPoint
+              Caption = 'Visualizar Baixas'
+              TabOrder = 4
+              OnClick = btnVisualizarBaixasClick
             end
           end
           object pnlGridFinanceiro: TPanel
@@ -828,6 +837,35 @@ object FmMain: TFmMain
               TitleFont.Style = []
             end
           end
+        end
+      end
+      object tsVisualizarBaixas: TTabSheet
+        Caption = 'tsVisualizarBaixas'
+        ImageIndex = 4
+        ExplicitLeft = 2
+        object gridPagamentos: TDBGrid
+          Left = 0
+          Top = 48
+          Width = 693
+          Height = 284
+          Align = alBottom
+          DataSource = dsBaixas
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+        end
+        object btnVoltar: TButton
+          Left = 17
+          Top = 15
+          Width = 91
+          Height = 27
+          Cursor = crHandPoint
+          Caption = 'Voltar'
+          TabOrder = 1
+          OnClick = btnVoltarClick
         end
       end
     end
@@ -892,8 +930,7 @@ object FmMain: TFmMain
   end
   object dsFinanceiro: TDataSource
     DataSet = QueryFinanceiros
-    Left = 456
-    Top = 16
+    Left = 536
   end
   object QueryFinanceiros: TFDQuery
     Connection = DmDados.FDConnection
@@ -903,7 +940,19 @@ object FmMain: TFmMain
         'imento, f.valor_nominal, f.valor_aberto, f.valor_pago, f.status'
       'from financeiro as f'
       'inner join pessoas as p on (p.id = f.pessoa_id)')
-    Left = 384
-    Top = 16
+    Left = 472
+    Top = 65528
+  end
+  object dsBaixas: TDataSource
+    DataSet = QueryBaixas
+    Left = 472
+    Top = 40
+  end
+  object QueryBaixas: TFDQuery
+    Connection = DmDados.FDConnection
+    SQL.Strings = (
+      'select * from financeiro_pagamentos')
+    Left = 400
+    Top = 8
   end
 end
