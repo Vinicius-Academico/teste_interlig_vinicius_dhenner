@@ -25,6 +25,7 @@ var
 
 implementation
 
+
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
@@ -61,19 +62,28 @@ begin
   try
     Ini := TIniFile.Create(PathIni);
     try
-      FDConnection.LoginPrompt := false;
-      FDConnection.ConnectionName := Ini.ReadString('DATABASE', 'CAMINHO', '');
+      FDConnection.Close;
+      FDConnection.LoginPrompt := False;
+      FDConnection.ConnectionDefName := '';
+      FDConnection.Params.Clear;
+
+      FDConnection.Params.DriverID := 'FB';
+      FDConnection.Params.Database := Ini.ReadString('DATABASE', 'CAMINHO', '');
       FDConnection.Params.UserName := Ini.ReadString('DATABASE', 'USER', '');
       FDConnection.Params.Password := Ini.ReadString('DATABASE', 'PASSWORD', '');
+
       FDConnection.Connected := True;
     except
-      on e: Exception do
-        ShowMessage('Erro ao conectar no banco de dados.' + e.Message);
+      on E: Exception do
+      begin
+        ShowMessage('Erro ao conectar no banco de dados: ' + E.Message);
+      end;
     end;
   finally
     FreeAndNil(Ini);
   end;
 end;
+
 
 end.
 

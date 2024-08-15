@@ -5,9 +5,9 @@ object DmDados: TDmDados
   object FDConnection: TFDConnection
     ConnectionName = 'C:\teste_interlig_database\DATA.FDB'
     Params.Strings = (
-      'Database=C:\teste_interlig_database\DATA.FDB'
       'User_Name=sysdba'
       'Password=masterkey'
+      'Database=C:\teste_interlig_database\DATA.FDB'
       'DriverID=FB')
     LoginPrompt = False
     Left = 192

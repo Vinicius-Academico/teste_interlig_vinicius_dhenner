@@ -31,7 +31,7 @@ object FmMain: TFmMain
       Top = 59
       Width = 701
       Height = 360
-      ActivePage = tsVisualizarFinanceiros
+      ActivePage = tsCadastrarPessoa
       Align = alClient
       TabOrder = 0
       object tsPessoas: TTabSheet
@@ -59,8 +59,6 @@ object FmMain: TFmMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitLeft = -24
-          ExplicitTop = 65
           object rgTipoPessoaGrid: TRadioGroup
             Left = 0
             Top = 10
@@ -719,7 +717,6 @@ object FmMain: TFmMain
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          ExplicitLeft = 3
           object pnlVisuFinanceirosTop: TPanel
             Left = 0
             Top = 0
@@ -730,7 +727,6 @@ object FmMain: TFmMain
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitTop = -6
             object lbledtPesquisaPessoa: TLabeledEdit
               Left = 18
               Top = 26
@@ -806,8 +802,6 @@ object FmMain: TFmMain
             Color = clWhite
             ParentBackground = False
             TabOrder = 1
-            ExplicitTop = 8
-            ExplicitHeight = 73
             object gridFinanceiros: TDBGrid
               Left = 0
               Top = 0
@@ -829,7 +823,6 @@ object FmMain: TFmMain
       object tsVisualizarBaixas: TTabSheet
         Caption = 'tsVisualizarBaixas'
         ImageIndex = 4
-        ExplicitLeft = 2
         object gridPagamentos: TDBGrid
           Left = 0
           Top = 48
