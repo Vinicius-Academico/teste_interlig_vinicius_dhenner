@@ -76,7 +76,7 @@ end;
 
 procedure TFinanceiro.DefineStatus;
 begin
-  if ValorNominal = ValorPago then
+  if ValorAberto = 0 then
     Status := 'A'
   else
     Status := 'Q';

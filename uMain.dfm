@@ -34,6 +34,7 @@ object FmMain: TFmMain
       ActivePage = tsFinanceiro
       Align = alClient
       TabOrder = 0
+      ExplicitTop = 54
       object tsPessoas: TTabSheet
         Caption = 'tsPessoas'
         object gridPessoas: TDBGrid
@@ -43,7 +44,7 @@ object FmMain: TFmMain
           Height = 267
           Align = alClient
           DataSource = dsPessoas
-          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
@@ -59,6 +60,8 @@ object FmMain: TFmMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitLeft = -24
+          ExplicitTop = 65
           object rgTipoPessoaGrid: TRadioGroup
             Left = 0
             Top = 10
@@ -717,6 +720,116 @@ object FmMain: TFmMain
           end
         end
       end
+      object tsVisualizarFinanceiros: TTabSheet
+        Caption = 'tsVisualizarFinanceiros'
+        ImageIndex = 3
+        object pnlVisuFinanceiros: TPanel
+          Left = 0
+          Top = 0
+          Width = 693
+          Height = 332
+          Align = alClient
+          BevelOuter = bvNone
+          Color = clWhite
+          ParentBackground = False
+          TabOrder = 0
+          ExplicitLeft = 3
+          object pnlVisuFinanceirosTop: TPanel
+            Left = 0
+            Top = 0
+            Width = 693
+            Height = 67
+            Align = alTop
+            BevelOuter = bvNone
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 0
+            ExplicitTop = -6
+            object lbledtPesquisaPessoa: TLabeledEdit
+              Left = 18
+              Top = 26
+              Width = 185
+              Height = 25
+              EditLabel.Width = 75
+              EditLabel.Height = 17
+              EditLabel.Caption = 'C'#243'd. Pessoa:'
+              EditLabel.Font.Charset = DEFAULT_CHARSET
+              EditLabel.Font.Color = clWindowText
+              EditLabel.Font.Height = -13
+              EditLabel.Font.Name = 'Segoe UI'
+              EditLabel.Font.Style = []
+              EditLabel.ParentFont = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              MaxLength = 50
+              NumbersOnly = True
+              ParentFont = False
+              TabOrder = 0
+            end
+            object btnPesquisarPessoa: TButton
+              Left = 209
+              Top = 26
+              Width = 91
+              Height = 27
+              Cursor = crHandPoint
+              Caption = 'Pesquisar'
+              TabOrder = 1
+              OnClick = btnPesquisarPessoaClick
+            end
+            object btnBaixaParcial: TButton
+              Left = 306
+              Top = 26
+              Width = 91
+              Height = 27
+              Cursor = crHandPoint
+              Caption = 'Baixa Parcial'
+              TabOrder = 2
+              OnClick = btnSalvarFinanceiroClick
+            end
+            object btnBaixaCompleta: TButton
+              Left = 403
+              Top = 26
+              Width = 91
+              Height = 27
+              Cursor = crHandPoint
+              Caption = 'Baixa Completa'
+              TabOrder = 3
+              OnClick = btnBaixaCompletaClick
+            end
+          end
+          object pnlGridFinanceiro: TPanel
+            Left = 0
+            Top = 67
+            Width = 693
+            Height = 265
+            Align = alClient
+            BevelOuter = bvNone
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 1
+            ExplicitTop = 8
+            ExplicitHeight = 73
+            object gridFinanceiros: TDBGrid
+              Left = 0
+              Top = 0
+              Width = 693
+              Height = 265
+              Align = alClient
+              DataSource = dsFinanceiro
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+            end
+          end
+        end
+      end
     end
     object pnlButtons: TPanel
       Left = 0
@@ -746,6 +859,16 @@ object FmMain: TFmMain
         TabOrder = 1
         OnClick = btnCadastrarPessoasClick
       end
+      object btnVisualizarFinanceiros: TButton
+        Left = 235
+        Top = 11
+        Width = 111
+        Height = 37
+        Cursor = crHandPoint
+        Caption = 'Visualizar Financeiros'
+        TabOrder = 2
+        OnClick = btnVisualizarFinanceirosClick
+      end
     end
   end
   object dsPessoas: TDataSource
@@ -764,7 +887,23 @@ object FmMain: TFmMain
       '  CLIENTES c'
       'INNER JOIN'
       '  PESSOAS p ON c.PESSOA_ID = p.ID;')
-    Left = 600
+    Left = 576
+    Top = 8
+  end
+  object dsFinanceiro: TDataSource
+    DataSet = QueryFinanceiros
+    Left = 456
+    Top = 16
+  end
+  object QueryFinanceiros: TFDQuery
+    Connection = DmDados.FDConnection
+    SQL.Strings = (
+      
+        'select p.id as id_pessoas, f.id as id_financeiro, p.nome, f.venc' +
+        'imento, f.valor_nominal, f.valor_aberto, f.valor_pago, f.status'
+      'from financeiro as f'
+      'inner join pessoas as p on (p.id = f.pessoa_id)')
+    Left = 384
     Top = 16
   end
 end

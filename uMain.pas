@@ -61,6 +61,18 @@ type
     lblCodPessoa: TLabel;
     lblPessoa: TLabel;
     lblStatus: TLabel;
+    tsVisualizarFinanceiros: TTabSheet;
+    pnlVisuFinanceiros: TPanel;
+    pnlVisuFinanceirosTop: TPanel;
+    pnlGridFinanceiro: TPanel;
+    gridFinanceiros: TDBGrid;
+    dsFinanceiro: TDataSource;
+    QueryFinanceiros: TFDQuery;
+    lbledtPesquisaPessoa: TLabeledEdit;
+    btnPesquisarPessoa: TButton;
+    btnBaixaParcial: TButton;
+    btnBaixaCompleta: TButton;
+    btnVisualizarFinanceiros: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnListarPessoasClick(Sender: TObject);
@@ -73,6 +85,9 @@ type
     procedure rgTipoPessoaGridClick(Sender: TObject);
     procedure btnCancelarFinanceiroClick(Sender: TObject);
     procedure btnVisualizarFinanceiroClick(Sender: TObject);
+    procedure btnPesquisarPessoaClick(Sender: TObject);
+    procedure btnVisualizarFinanceirosClick(Sender: TObject);
+    procedure btnBaixaCompletaClick(Sender: TObject);
   private
     procedure CancelarCadastroDePessoa;
     procedure ConectarNoBancoDeDados;
@@ -93,6 +108,8 @@ type
     procedure DefineFiltroGrid;
     procedure LimparEditsFinanceiro;
     procedure VisualizarFinanceiro;
+    procedure PesquisarPessoa;
+    procedure BaixaCompleta;
   public
   end;
 
@@ -102,17 +119,41 @@ var
 implementation
 
 uses
-  uCliente;
+  uCliente, uFinanceiroPagamentos;
 
 {$R *.dfm}
 
+procedure TFmMain.BaixaCompleta;
+var
+   PagamentoFinanceiro : TFinanceiroPagamentos;
+begin
+  if QueryFinanceiros.IsEmpty then
+  begin
+    ShowMessage('Registro Vazio');
+    Exit;
+  end;
+
+  if QueryFinanceiros.FieldByName('status').AsString = 'Q' then
+  begin
+    ShowMessage('Título já quitado');
+    Exit;
+  end;
+
+  PagamentoFinanceiro := TFinanceiroPagamentos.Create;
+  PagamentoFinanceiro.PreencherValores(QueryFinanceiros.FieldByName('id_financeiro').AsInteger);
+  PagamentoFinanceiro.BaixaCompleta;
+  if PagamentoFinanceiro.InserirNoBanco then
+    ShowMessage('Baixa efetuada com sucesso!');
+  PagamentoFinanceiro.Free;
+end;
+
+procedure TFmMain.btnBaixaCompletaClick(Sender: TObject);
+begin
+  BaixaCompleta;
+end;
+
 procedure TFmMain.btnCadastrarFinanceiroClick(Sender: TObject);
 begin
-  if TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
-  begin
-    ShowMessage('Pessoa já possui financeiro cadastrado.');
-    exit;
-  end;
   pgc.ActivePageIndex := 2;
   lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
 end;
@@ -151,6 +192,13 @@ begin
   lbledtRazaoSocial.Clear;
 end;
 
+procedure TFmMain.PesquisarPessoa;
+begin
+  QueryFinanceiros.Close;
+  QueryFinanceiros.SQL.Text := 'select p.id as id_pessoas, f.id as id_financeiro, p.nome, f.vencimento, f.valor_nominal, f.valor_aberto, f.valor_pago, f.status from financeiro as f inner join pessoas as p on (p.id = f.pessoa_id) where p.id = ' + lbledtPesquisaPessoa.Text;
+  QueryFinanceiros.Open;
+end;
+
 procedure TFmMain.AbreTelaListarPessoas;
 begin
   pgc.ActivePageIndex := 0;
@@ -178,6 +226,7 @@ begin
   tsPessoas.TabVisible := false;
   tsCadastrarPessoa.TabVisible := false;
   tsFinanceiro.TabVisible := false;
+  tsVisualizarFinanceiros.TabVisible := false;
 end;
 
 procedure TFmMain.LimparEditsFinanceiro;
@@ -254,9 +303,14 @@ begin
   AbreTelaListarPessoas;
 end;
 
+procedure TFmMain.btnPesquisarPessoaClick(Sender: TObject);
+begin
+  PesquisarPessoa;
+end;
+
 procedure TFmMain.btnSalvarFinanceiroClick(Sender: TObject);
 begin
-  SalvarFinanceiro;
+    SalvarFinanceiro;
 end;
 
 procedure TFmMain.btnSalvarPessoaClick(Sender: TObject);
@@ -267,6 +321,11 @@ end;
 procedure TFmMain.btnVisualizarFinanceiroClick(Sender: TObject);
 begin
   VisualizarFinanceiro;
+end;
+
+procedure TFmMain.btnVisualizarFinanceirosClick(Sender: TObject);
+begin
+  pgc.ActivePageIndex := 3;
 end;
 
 function TFmMain.FinanceiroValido: Boolean;
@@ -493,39 +552,15 @@ begin
 end;
 
 procedure TFmMain.VisualizarFinanceiro;
-
-  procedure HabilitarEditsParaVisualizacao;
-  begin
-    btnSalvarFinanceiro.Enabled := false;
-    dtEmissao.Enabled := false;
-    dtVencimento.Enabled := false;
-    lbledtValorNominal.ReadOnly := true;
-    lbledtValorAberto.ReadOnly := true;
-    lbledtValorPago.ReadOnly := true;
-  end;
-
-var
-  Financeiro: TFinanceiro;
 begin
   if not TFinanceiro.PessoaPossuiFinanceiro(QueryPessoas.FieldByName('id').AsInteger) then
   begin
     ShowMessage('Pessoa não possui financeiro cadastrado.');
     exit;
   end;
-  pgc.ActivePageIndex := 2;
-
-  HabilitarEditsParaVisualizacao;
-
-  lblCodPessoa.Caption := QueryPessoas.FieldByName('id').AsString;
-  Financeiro := TFinanceiro.Create;
-  Financeiro.CarregarDoBanco(QueryPessoas.FieldByName('id').AsInteger);
-  dtEmissao.DateTime := Financeiro.Emissao;
-  dtVencimento.DateTime := Financeiro.Vencimento;
-  lbledtValorNominal.Text := FloatToStr(Financeiro.ValorNominal);
-  lbledtValorAberto.Text := FloatToStr(Financeiro.ValorAberto);
-  lbledtValorPago.Text := FloatToStr(Financeiro.ValorPago);
-  lblStatus.Caption := 'Status = ' + Financeiro.Status;
-  Financeiro.Free;
+    pgc.ActivePageIndex := 3;
+    lbledtPesquisaPessoa.Text := QueryPessoas.FieldByName('id').AsString;
+    PesquisarPessoa;
 end;
 
 function TFmMain.ClienteValido: Boolean;
